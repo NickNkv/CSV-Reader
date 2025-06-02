@@ -1,32 +1,9 @@
-# Prerequisites
-*.d
+# Ignore everything
+*
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Allow folders so we can include files inside them
+!*/
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Allow only .cpp and .hpp files
+!*.cpp
+!*.hpp
