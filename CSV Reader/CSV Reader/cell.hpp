@@ -1,11 +1,11 @@
 #pragma once
-//#include "types.hpp"
+#include "types.hpp"
 
 class Cell {
 public:
 	//lifecycle
 	Cell();
-	//Cell(const char* value, ColumnType dataType);
+	Cell(const char* value, ColumnType dataType);
 	Cell(const Cell& other);
 	~Cell();
 
@@ -13,5 +13,5 @@ public:
 
 private:
 	char* value;
-	//ColumnType dataType;
+	ColumnType dataType;
 };
