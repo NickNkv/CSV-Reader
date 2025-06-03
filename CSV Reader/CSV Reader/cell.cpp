@@ -79,3 +79,8 @@ void Cell::setValue(const char* value) {
 		temp = nullptr;
 	}
 }
+
+void Cell::emptyCell() {
+	delete[] this->value;
+	this->value = nullptr;
+}

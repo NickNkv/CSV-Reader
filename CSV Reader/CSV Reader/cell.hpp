@@ -16,6 +16,7 @@ public:
 	void setValue(const char* value);
 
 	//mechanics
+	void emptyCell();
 
 private:
 	char* value;
