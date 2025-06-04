@@ -52,6 +52,15 @@ Column::Column(const Column& other) {
 
 	//deep copy of each cell
 	for (size_t i = 0; i < this->size; i++) {
-
+		this->cells[i] = new (std::nothrow) Cell(*other.cells[i]);
+		if (!this->cells[i]) {
+			for (size_t j = 0; j < i; j++) {
+				delete this->cells[i];
+			}
+			delete[] this->cells;
+			this->cells = nullptr;
+			delete[] this->name;
+			throw std::bad_alloc();
+		}
 	}
 }
