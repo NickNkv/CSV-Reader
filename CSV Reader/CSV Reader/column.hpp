@@ -30,9 +30,9 @@ public:
 
 
 private:
-	size_t size; 
+	size_t size; //number of elements
 	size_t allocatedCapacity;
 	ColumnType type;
 	char* name; //column header name
-	Cell* cells;
+	Cell** cells;
 };

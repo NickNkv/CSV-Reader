@@ -23,6 +23,7 @@ int main() {
 	//std::cout << "b: " << b.getValue() << "\n";
 	//std::cout << "c: " << c.getValue() << "\n";
 	//std::cout << "d: " << d.getValue() << "\n";
-
+	size_t temp = 2 > 3 ? 2 : 3;
+	std::cout << temp;
 	return 0;
 }
