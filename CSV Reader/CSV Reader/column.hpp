@@ -19,14 +19,16 @@ public:
 	//size setter - not allowed!
 
 	ColumnType getType() const { return type; }
-	void setType(ColumnType type);
-
+	void setType();
+	 
 	const char* getName() const { return name; }
 	void setName(const char* name);
 
 	//mechanics
 	void insertCellAt(size_t index, Cell& cell);
 	void addCell(Cell& cell);
+	const Cell** getCells();
+	const Cell* getCellAt(size_t index);
 
 
 private:

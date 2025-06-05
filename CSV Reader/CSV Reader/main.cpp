@@ -1,5 +1,7 @@
 #include <iostream>
 #include "cell.hpp"
+#include "utils.hpp"
+#include "column.hpp"
 
 int main() {
 	//Cell a;
@@ -23,7 +25,9 @@ int main() {
 	//std::cout << "b: " << b.getValue() << "\n";
 	//std::cout << "c: " << c.getValue() << "\n";
 	//std::cout << "d: " << d.getValue() << "\n";
-	size_t temp = 2 > 3 ? 2 : 3;
-	std::cout << temp;
+	Column col(0, ColumnType::Text, "Col");
+	std::cout << utilGnrl::columnTypeToStr(col.getType()) << "\n";
+	col.setType();
+	std::cout << utilGnrl::columnTypeToStr(col.getType());
 	return 0;
 }
