@@ -28,6 +28,12 @@ int main() {
 	Column col(0, ColumnType::Text, "Col");
 	std::cout << utilGnrl::columnTypeToStr(col.getType()) << "\n";
 	col.setType();
-	std::cout << utilGnrl::columnTypeToStr(col.getType());
+	std::cout << utilGnrl::columnTypeToStr(col.getType()) << std::endl;
+
+	Column e(4, ColumnType::Currency, "HSkeh");
+	e = col;
+	std::cout << "E info\n";
+	std::cout << utilGnrl::columnTypeToStr(e.getType()) << "\n";
+	std::cout << e.getName() << " " << e.getSize();
 	return 0;
 }

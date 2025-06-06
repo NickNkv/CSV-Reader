@@ -84,6 +84,64 @@ Column::~Column() {
 	delete[] this->cells;
 }
 
+Column& Column::operator=(const Column& other) {
+	if (this == &other) {
+		return *this;
+	}
+
+	//copying the name in temp name
+	char* tempName = new (std::nothrow) char[strlen(other.name) + 1];
+	if (!tempName) {
+		std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+		return *this;
+	}
+	strcpy(tempName, other.name);
+
+	//copying the cells in a temp** container
+	Cell** tempCells = new (std::nothrow) Cell*[other.allocatedCapacity];
+	if (!tempCells) {
+		std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+		delete[] tempName;
+		return *this;
+	}
+
+	for (size_t i = 0; i < other.size; i++) {
+		tempCells[i] = new (std::nothrow) Cell(*other.cells[i]);
+		if (!tempCells[i]) {
+			for (size_t j = 0; j < i; j++) {
+				delete tempCells[i];
+			}
+			delete[] tempCells;
+			delete[] tempName;
+			std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+			return *this;
+		}
+	}
+	//nullptr-ing the rest of the allocated memory
+	for (size_t i = other.size; i < other.allocatedCapacity; i++) {
+		tempCells[i] = nullptr;
+	}
+
+	//point of no return - making changes to [this]
+	for (size_t i = 0; i < this->allocatedCapacity; i++) {
+		delete this->cells[i];
+	}
+	delete[] this->cells;
+
+	this->cells = tempCells;
+	tempCells = nullptr;
+
+	delete[] this->name;
+	this->name = tempName;
+	tempName = nullptr;
+
+	this->size = other.size;
+	this->allocatedCapacity = other.allocatedCapacity;
+	this->type = other.type;
+
+	return *this;
+}
+
 //mechanics
 void Column::setType() {
 	if (this->size != 0) {
