@@ -105,6 +105,13 @@ Column& Column::operator=(const Column& other) {
 		return *this;
 	}
 
+	//other is guarantied to be in valid state (size <= allocatedCapacity) but I put this guard just in case
+	if (other.size > other.allocatedCapacity) {
+		std::cerr << "Dangerous situation in Column operator= : other.size > other.allocated capacity!\n";
+		std::cerr << "Immediate investigation needed!" << std::endl;
+		throw std::invalid_argument("other.size > other.allocated capacity!");
+	}
+
 	for (size_t i = 0; i < other.size; i++) {
 		tempCells[i] = new (std::nothrow) Cell(*other.cells[i]);
 		if (!tempCells[i]) {
