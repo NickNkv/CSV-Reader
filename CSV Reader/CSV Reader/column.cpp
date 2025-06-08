@@ -7,9 +7,9 @@
 #define BONUS_CAPACITY 10 
 
 //lifecycle
-Column::Column(size_t size, ColumnType type, const char* name) {
-	this->size = size;
-	this->allocatedCapacity = size + BONUS_CAPACITY;
+Column::Column(ColumnType type, const char* name) {
+	this->size = 0;
+	this->allocatedCapacity = BONUS_CAPACITY;
 	this->type = type;
 
 	if (strlen(name) == 0) {
@@ -189,4 +189,79 @@ void Column::setType() {
 	default: 
 		break;
 	}
+}
+
+void Column::setName(const char* name) {
+	if (strlen(name) == 0) {
+		std::cout << "Name can not be empty! Try again!" << std::endl;
+		return;
+	}
+
+	char* tempName = new (std::nothrow) char[strlen(name) + 1];
+	if (!tempName) {
+		std::cerr << "Memory allocation error while changing column " << this->name << "'s name\n";
+		std::cerr << "Try again!" << std::endl;
+		return;
+	}
+
+	strcpy(tempName, name);
+	this->name = tempName;
+	tempName = nullptr;
+}
+
+void Column::insertCellAt(size_t index, Cell& cell) {
+	if (this->size == 0) {
+		std::cout << "Size is 0, use addCell() method!" << std::endl;
+		return;
+	}
+
+	if (index < 0 || index >= this->size) {
+		std::cout << "Invalid index!\n";
+		std::cout << "For this column valid index would be in range [0, " << this->size - 1 << "]" << std::endl;
+		return;
+	}
+
+	//if allocated space is enough for one more cell
+	if (this->size + 1 <= this->allocatedCapacity) {
+		this->cells[this->size] = new (std::nothrow) Cell();
+		if (!this->cells[this->size]) {
+			std::cerr << "Memory allocation error when inserting a cell at index " << index << "!" << std::endl;
+			std::cerr << "Try again!" << std::endl;
+			return;
+		}
+
+		for (size_t i = this->size; i > index; i--) {
+			this->cells[i] = this->cells[i - 1];
+		}
+		this->cells[index] = new (std::nothrow) Cell(cell);
+	}
+
+	//if allocated space is NOT enough for one more cell
+
+
+	this->size += 1;
+}
+
+void Column::addCell(Cell& cell) {
+	//if allocated space is enough for one more cell
+	if (this->size + 1 <= this->allocatedCapacity) {
+		this->cells[this->size] = new (std::nothrow) Cell(cell);
+		if (!this->cells[this->size]) {
+			std::cerr << "Memory allocation error while adding new cell! Try again!" << std::endl;
+			return;
+		}
+	}
+
+	//if allocated space is NOT enough for one more cell
+
+	this->size += 1;
+}
+
+const Cell* Column::getCellAt(size_t index) {
+	if (index < 0 || index >= this->size) {
+		std::cout << "Invalid index!\n";
+		std::cout << "For this column valid index would be in range [0, " << this->size - 1 << "]" << std::endl;
+		return nullptr;
+	}
+	return this->cells[index];
 }

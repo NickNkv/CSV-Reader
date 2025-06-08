@@ -8,7 +8,7 @@ class Column {
 public:
 	//lifecycle
 	Column() = delete;
-	Column(size_t size, ColumnType type, const char* name);
+	Column(ColumnType type, const char* name);
 	Column(const Column& other);
 	~Column();
 
