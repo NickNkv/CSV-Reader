@@ -51,11 +51,11 @@ int main() {
 	}
 
 	for (int i = 0; i < 17; i++) {
-		if (!t.getCellAt(i)->getValue()) {
-			std::cout << i << ": Ampty cell\n";
+		if (t[i]->getValue()) {
+			std::cout << i << ": " << t[i]->getValue() << "\n";
 		}
 		else {
-			std::cout << i << ": " << t.getCellAt(i)->getValue() << "\n";
+			std::cout << i << ": NULL\n";
 		}
 	}
 	return 0;

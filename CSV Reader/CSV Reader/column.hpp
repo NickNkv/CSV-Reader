@@ -13,6 +13,8 @@ public:
 	~Column();
 
 	Column& operator = (const Column& other);
+	Cell* operator[] (size_t index);
+	const Cell* operator[] (size_t index) const;
 
 	//getters & setters
 	size_t getSize() const { return size; }

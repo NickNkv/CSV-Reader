@@ -150,6 +150,24 @@ Column& Column::operator=(const Column& other) {
 	return *this;
 }
 
+Cell* Column::operator[](size_t index) {
+	if (index < 0 || index >= this->size) {
+		std::cout << "Invalid index!\n";
+		std::cout << "For this column valid index would be in range [0, " << this->size - 1 << "]" << std::endl;
+		return nullptr;
+	}
+	return this->cells[index];
+}
+
+const Cell* Column::operator[](size_t index) const {
+	if (index < 0 || index >= this->size) {
+		std::cout << "Invalid index!\n";
+		std::cout << "For this column valid index would be in range [0, " << this->size - 1 << "]" << std::endl;
+		return nullptr;
+	}
+	return this->cells[index];
+}
+
 //mechanics
 void Column::setType() {
 	if (this->size != 0) {
