@@ -6,9 +6,9 @@
 int main() {
 	Cell a;
 	Cell b("b");
-	char word[10];
-	std::cin >> word;
-	Cell c(word);
+	//char word[10];
+	//std::cin >> word;
+	Cell c("c");
 	Cell d("d");
 
 	////std::cout << "a: " << a.getValue() << "\n";
@@ -39,16 +39,23 @@ int main() {
 	Column t(ColumnType::Text, "t");
 	t.addCell(a);
 	t.addCell(b);
-	t.insertCellAt(1, c);
-	t.insertCellAt(1, d);
-	int index = 0;
+	t.addCell(c);
+	t.addCell(d);
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 13; i++) {
+		std::cout << i << ": ";
+		char word[10];
+		std::cin >> word;
+		Cell temp(word);
+		t.insertCellAt(3, temp);
+	}
+
+	for (int i = 0; i < 17; i++) {
 		if (!t.getCellAt(i)->getValue()) {
-			std::cout << "Ampty cell\n";
+			std::cout << i << ": Ampty cell\n";
 		}
 		else {
-			std::cout << t.getCellAt(i)->getValue() << "\n";
+			std::cout << i << ": " << t.getCellAt(i)->getValue() << "\n";
 		}
 	}
 	return 0;

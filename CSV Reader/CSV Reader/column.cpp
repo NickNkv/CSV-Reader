@@ -76,6 +76,7 @@ Column::Column(const Column& other) {
 }
 
 Column::~Column() {
+	//std::cout << "Size: " << this->size << "  Alloc: " << this->allocatedCapacity << "\n";
 	delete[] this->name;
 
 	for (size_t i = 0; i < this->allocatedCapacity; i++) {
@@ -221,40 +222,36 @@ void Column::insertCellAt(size_t index, Cell& cell) {
 		return;
 	}
 
-	//if allocated space is enough for one more cell
-	if (this->size + 1 <= this->allocatedCapacity) {
-		this->cells[this->size] = new (std::nothrow) Cell();
-		if (!this->cells[this->size]) {
-			std::cerr << "Memory allocation error when inserting a cell at index " << index << "!" << std::endl;
-			std::cerr << "Try again!" << std::endl;
-			return;
-		}
-
-		for (size_t i = this->size; i > index; i--) {
-			this->cells[i] = this->cells[i - 1];
-		}
-		this->cells[index] = new (std::nothrow) Cell(cell);
+	//if allocated space is NOT enough for one more cell
+	if (this->size + 1 > this->allocatedCapacity) {
+		expandCollection();
 	}
 
-	//if allocated space is NOT enough for one more cell
+	this->cells[this->size] = new (std::nothrow) Cell();
+	if (!this->cells[this->size]) {
+		std::cerr << "Memory allocation error when inserting a cell at index " << index << "!" << std::endl;
+		std::cerr << "Try again!" << std::endl;
+		return;
+	}
 
+	for (size_t i = this->size; i > index; i--) {
+		this->cells[i] = this->cells[i - 1];
+	}
+	this->cells[index] = new (std::nothrow) Cell(cell);
 
 	this->size += 1;
 }
 
 void Column::addCell(Cell& cell) {
-	//if allocated space is enough for one more cell
-	if (this->size + 1 <= this->allocatedCapacity) {
-		this->cells[this->size] = new (std::nothrow) Cell(cell);
-		if (!this->cells[this->size]) {
-			std::cerr << "Memory allocation error while adding new cell! Try again!" << std::endl;
-			return;
-		}
-	}
-
 	//if allocated space is NOT enough for one more cell
 	if (this->size + 1 > this->allocatedCapacity) {
 		expandCollection();
+	}
+
+	this->cells[this->size] = new (std::nothrow) Cell(cell);
+	if (!this->cells[this->size]) {
+		std::cerr << "Memory allocation error while adding new cell! Try again!" << std::endl;
+		return;
 	}
 
 	this->size += 1;
@@ -285,4 +282,10 @@ void Column::expandCollection() {
 	for (size_t i = this->size; i < this->size + 1 + BONUS_CAPACITY; i++) {
 		tempCollection[i] = nullptr;
 	}
+
+	delete[] this->cells;
+	this->cells = tempCollection;
+	this->allocatedCapacity = this->size + 1 + BONUS_CAPACITY;
+
+	//std::cout << "Collection expanded\n";
 }
