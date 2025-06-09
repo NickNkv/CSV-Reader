@@ -42,15 +42,17 @@ int main() {
 	t.addCell(c);
 	t.addCell(d);
 
-	for (int i = 0; i < 13; i++) {
-		std::cout << i << ": ";
-		char word[10];
-		std::cin >> word;
-		Cell temp(word);
-		t.insertCellAt(3, temp);
-	}
+	//for (int i = 0; i < 13; i++) {
+	//	std::cout << i << ": ";
+	//	char word[10];
+	//	std::cin >> word;
+	//	Cell temp(word);
+	//	t.insertCellAt(3, temp);
+	//}
 
-	for (int i = 0; i < 17; i++) {
+	t.removeCellAt(2);
+
+	for (int i = 0; i < t.getSize(); i++) {
 		if (t[i]->getValue()) {
 			std::cout << i << ": " << t[i]->getValue() << "\n";
 		}

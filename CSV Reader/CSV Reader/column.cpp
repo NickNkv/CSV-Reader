@@ -11,6 +11,7 @@ Column::Column(ColumnType type, const char* name) {
 	this->size = 0;
 	this->allocatedCapacity = BONUS_CAPACITY;
 	this->type = type;
+	this->width = 0;
 
 	if (strlen(name) == 0) {
 		throw std::invalid_argument("Name can not be empty string");
@@ -36,6 +37,7 @@ Column::Column(const Column& other) {
 	this->size = other.size;
 	this->allocatedCapacity = other.allocatedCapacity; 
 	this->type = other.type;
+	this->width = other.width;
 
 	this->name = new (std::nothrow) char[strlen(other.name) + 1];
 	if (!this->name) {
@@ -146,6 +148,7 @@ Column& Column::operator=(const Column& other) {
 	this->size = other.size;
 	this->allocatedCapacity = other.allocatedCapacity;
 	this->type = other.type;
+	this->width = other.width;
 
 	return *this;
 }
@@ -257,6 +260,14 @@ void Column::insertCellAt(size_t index, Cell& cell) {
 	}
 	this->cells[index] = new (std::nothrow) Cell(cell);
 
+
+	//change the width
+	if (cell.getValue()) {
+		if (this->width < strlen(cell.getValue())) {
+			this->width = strlen(cell.getValue());
+		}
+	}
+
 	this->size += 1;
 }
 
@@ -272,6 +283,13 @@ void Column::addCell(Cell& cell) {
 		return;
 	}
 
+	//change the width
+	if (cell.getValue()) {
+		if (this->width < strlen(cell.getValue())) {
+			this->width = strlen(cell.getValue());
+		}
+	}
+
 	this->size += 1;
 }
 
@@ -282,6 +300,24 @@ const Cell* Column::getCellAt(size_t index) {
 		return nullptr;
 	}
 	return this->cells[index];
+}
+
+void Column::removeCellAt(size_t index) {
+	if (index < 0 || index >= this->size) {
+		std::cout << "Invalid index!\n";
+		std::cout << "For this column valid index would be in range [0, " << this->size - 1 << "]" << std::endl;
+		return;
+	}
+
+	//when we delete a cell, we move the rest of the cells one space backwards and nullptr the last cell
+	delete this->cells[index];
+	for (size_t i = index; i < this->size - 1; i++) {
+		this->cells[i] = this->cells[i + 1]; //to be tested
+	}
+
+	this->cells[this->size - 1] = nullptr;
+
+	this->size -= 1;
 }
 
 //private methods for internal work

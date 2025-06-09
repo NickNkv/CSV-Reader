@@ -26,10 +26,14 @@ public:
 	const char* getName() const { return name; }
 	void setName(const char* name);
 
+	unsigned int getWidth() const { return width; }
+	//width setter - not allowed!
+
 	//mechanics
 	void insertCellAt(size_t index, Cell& cell);
 	void addCell(Cell& cell);
 	const Cell* getCellAt(size_t index);
+	void removeCellAt(size_t index);
 
 private:
 	void expandCollection(); //allocates new [size + BONUS_CAPACITY] cell* 
@@ -40,4 +44,6 @@ private:
 	ColumnType type;
 	char* name; //column header name
 	Cell** cells;
+
+	unsigned int width; //keeps the length of the longest value (out of all cells in this col), used to later display the table (spacings)
 };
