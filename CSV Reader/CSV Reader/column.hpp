@@ -27,9 +27,10 @@ public:
 	//mechanics
 	void insertCellAt(size_t index, Cell& cell);
 	void addCell(Cell& cell);
-	const Cell** getCells();
 	const Cell* getCellAt(size_t index);
 
+private:
+	void expandCollection(); //allocates new [size + BONUS_CAPACITY] cell* 
 
 private:
 	size_t size; //number of elements

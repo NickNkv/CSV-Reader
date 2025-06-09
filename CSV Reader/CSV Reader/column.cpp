@@ -253,6 +253,9 @@ void Column::addCell(Cell& cell) {
 	}
 
 	//if allocated space is NOT enough for one more cell
+	if (this->size + 1 > this->allocatedCapacity) {
+		expandCollection();
+	}
 
 	this->size += 1;
 }
@@ -264,4 +267,22 @@ const Cell* Column::getCellAt(size_t index) {
 		return nullptr;
 	}
 	return this->cells[index];
+}
+
+//private methods for internal work
+void Column::expandCollection() {
+	Cell** tempCollection = new (std::nothrow) Cell*[this->size + 1 + BONUS_CAPACITY];
+	if (!tempCollection) {
+		throw std::bad_alloc();
+	}
+
+	//copying the cells pointers
+	for (size_t i = 0; i < this->size; i++) {
+		tempCollection[i] = this->cells[i];
+	}
+
+	//nullptr-ing the rest of the allocated memory
+	for (size_t i = this->size; i < this->size + 1 + BONUS_CAPACITY; i++) {
+		tempCollection[i] = nullptr;
+	}
 }
