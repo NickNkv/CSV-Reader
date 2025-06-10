@@ -6,6 +6,23 @@
 //when the column gets resized, (BONUS_CAPACITY) null pointers are added to this->cells
 #define BONUS_CAPACITY 10 
 
+Column::Column() {
+	this->size = 0;
+	this->allocatedCapacity = BONUS_CAPACITY;
+	this->type = ColumnType::Text;
+	this->width = 0;
+	this->name = nullptr;
+
+	this->cells = new (std::nothrow) Cell*[this->allocatedCapacity];
+	if (!this->cells) {
+		throw std::bad_alloc();
+	}
+
+	for (size_t i = 0; i < this->allocatedCapacity; i++) {
+		this->cells[i] = nullptr;
+	}
+}
+
 //lifecycle
 Column::Column(ColumnType type, const char* name) {
 	this->size = 0;

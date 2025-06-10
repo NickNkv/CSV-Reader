@@ -7,7 +7,7 @@
 class Column {
 public:
 	//lifecycle
-	Column() = delete;
+	Column();
 	Column(ColumnType type, const char* name);
 	Column(const Column& other);
 	~Column();
@@ -44,6 +44,5 @@ private:
 	ColumnType type;
 	char* name; //column header name
 	Cell** cells;
-
 	unsigned int width; //keeps the length of the longest value (out of all cells in this col), used to later display the table (spacings)
 };

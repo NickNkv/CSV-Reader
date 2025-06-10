@@ -24,6 +24,13 @@ public:
 	void setDelimiter(const char* delimiter);
 
 	//mechanics
+	void addColumn(Column& column);
+	void removeColumn(size_t index);
+	void copyColumn(size_t index);
+	void changeColumnOrder();
+	void removeDuplicateRows();
+	void changeColumnName(size_t index);
+
 
 private:
 	char* name;
