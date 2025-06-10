@@ -143,8 +143,8 @@ ColumnType util::detectType(const char* value) {
 	if (isQuotedText(value)) return ColumnType::Text;
 	if (isValidEGN(value)) return ColumnType::EGN;
 	if (isOldFacultyNumber(value)) return ColumnType::FacultyNumber;
-	if (isCurrency(value)) return ColumnType::Currency;
 	if (isNewFacultyNumber(value)) return ColumnType::FacultyNumber;
+	if (isCurrency(value)) return ColumnType::Currency;
 	if (isNumber(value)) return ColumnType::Number;
 	return ColumnType::Text;
 }
