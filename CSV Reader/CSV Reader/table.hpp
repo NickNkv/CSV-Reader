@@ -12,7 +12,7 @@ public:
 
 	//getters & setters
 	const char* getName() const { return name; }
-	void setName();
+	void setName(const char* name);
 
 	size_t getColCount() const { return colCount; }
 	//colCoint setter is NOT allowed

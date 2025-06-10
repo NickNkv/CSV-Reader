@@ -92,6 +92,13 @@ Table::Table(const Table& other) {
 		this->columns[i] = nullptr;
 	}
 
+	//other is guarantied to be in valid state (size <= allocatedCapacity) but I put this guard just in case
+	if (this->colCount > this->allocatedCapacity) {
+		std::cerr << "Dangerous situation in Table copy constructor: colCount > allocated capacity!\n";
+		std::cerr << "Immediate investigation needed!" << std::endl;
+		throw std::invalid_argument("Number of columns > allocated capacity!");
+	}
+
 	//deep copy of each col
 	for (size_t i = 0; i < this->colCount; i++) {
 		this->columns[i] = new (std::nothrow) Column(*other.columns[i]);
@@ -116,4 +123,40 @@ Table::~Table() {
 		delete this->columns[i];
 	}
 	delete[] this->columns;
+}
+
+void Table::setName(const char* name) {
+	if (strlen(name) == 0) {
+		std::cout << "Name can not be empty! Try again!" << std::endl;
+		return;
+	}
+
+	char* tempName = new (std::nothrow) char[strlen(name) + 1];
+	if (!tempName) {
+		std::cerr << "Memory allocation error while changing table " << this->name << "'s name\n";
+		std::cerr << "Try again!" << std::endl;
+		return;
+	}
+
+	strcpy(tempName, name);
+	this->name = tempName;
+	tempName = nullptr;
+}
+
+void Table::setDelimiter(const char* delimiter) {
+	if (strlen(delimiter) == 0) {
+		std::cout << "Delimiter can not be empty! Try again!" << std::endl;
+		return;
+	}
+
+	char* tempDel = new (std::nothrow) char[strlen(delimiter) + 1];
+	if (!tempDel) {
+		std::cerr << "Memory allocation error while changing table " << this->name << "'s delimiter\n";
+		std::cerr << "Try again!" << std::endl;
+		return;
+	}
+
+	strcpy(tempDel, delimiter);
+	this->delimiter = tempDel;
+	tempDel = nullptr;
 }
