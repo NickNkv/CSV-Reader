@@ -125,6 +125,87 @@ Table::~Table() {
 	delete[] this->columns;
 }
 
+Table& Table::operator=(const Table& other) {
+	if (this == &other) {
+		return *this;
+	}
+
+	//copying name in tempName
+	char* tempName = new (std::nothrow) char[strlen(other.name) + 1];
+	if (!tempName) {
+		std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+		return *this;
+	}
+	strcpy(tempName, other.name);
+
+	//copying delimiter in tempDelimiter
+	char* tempDelimiter = new (std::nothrow) char[strlen(other.delimiter) + 1];
+	if (!tempDelimiter) {
+		std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+		delete[] tempName;
+		return *this;
+	}
+	strcpy(tempDelimiter, other.delimiter);
+
+	//copying the columns in tempColumns**
+	Column** tempColumns = new (std::nothrow) Column*[other.allocatedCapacity];
+	if (!tempColumns) {
+		std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+		delete[] tempName;
+		delete[] tempDelimiter;
+		return *this;
+	}
+
+	//other is guarantied to be in valid state (size <= allocatedCapacity) but I put this guard just in case
+	if (this->colCount > this->allocatedCapacity) {
+		std::cerr << "Dangerous situation in Table copy constructor: colCount > allocated capacity!\n";
+		std::cerr << "Immediate investigation needed!" << std::endl;
+		throw std::invalid_argument("Number of columns > allocated capacity!");
+	}
+
+	for (size_t i = 0; i < other.colCount; i++) {
+		tempColumns[i] = new (std::nothrow) Column(*other.columns[i]);
+		if (!tempColumns[i]) {
+			for (size_t j = 0; j < i; j++) {
+				delete tempColumns[i];
+			}
+			std::cerr << "Memory allocation error with operator =, try again!" << std::endl;
+			delete[] tempColumns;
+			delete[] tempName;
+			delete[] tempDelimiter;
+			return *this;
+		}
+	}
+
+	//nullptr-ing the rest of the allocated memory
+	for (size_t i = other.colCount; i < other.allocatedCapacity; i++) {
+		tempColumns[i] = nullptr;
+	}
+
+	//point of no return - making changes to [this]
+	for (size_t i = 0; i < this->allocatedCapacity; i++) {
+		delete this->columns[i];
+	}
+	delete[] this->columns;
+	this->columns = tempColumns;
+	tempColumns = nullptr;
+
+	delete[] this->name;
+	this->name = tempName;
+	tempName = nullptr;
+
+	delete[] this->delimiter;
+	this->delimiter = tempDelimiter;
+	tempDelimiter = nullptr;
+
+	this->colCount = other.colCount;
+	this->rowCount = other.rowCount; 
+	this->allocatedCapacity = other.allocatedCapacity;
+
+	return *this;
+}
+
+//setters
 void Table::setName(const char* name) {
 	if (strlen(name) == 0) {
 		std::cout << "Name can not be empty! Try again!" << std::endl;
