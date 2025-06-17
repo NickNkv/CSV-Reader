@@ -30,8 +30,8 @@ public:
 	//width setter - not allowed!
 
 	//mechanics
-	void insertCellAt(size_t index, Cell& cell);
-	void addCell(Cell& cell);
+	bool insertCellAt(size_t index, Cell& cell);
+	bool addCell(Cell& cell);
 	const Cell* getCellAt(size_t index);
 	void removeCellAt(size_t index);
 

@@ -139,6 +139,15 @@ const char* util::columnTypeToStr(ColumnType type) {
 	}
 }
 
+ColumnType util::strToColumnType(const char* str) {
+	if (strcmp(str, "Text") == 0) return ColumnType::Text;
+	if (strcmp(str, "Number") == 0) return ColumnType::Number;
+	if (strcmp(str, "Currency") == 0) return ColumnType::Currency;
+	if (strcmp(str, "EGN") == 0) return ColumnType::EGN;
+	if (strcmp(str, "FacultyNumber") == 0) return ColumnType::FacultyNumber;
+	return ColumnType::Text;
+}
+
 ColumnType util::detectType(const char* value) {
 	if (isQuotedText(value)) return ColumnType::Text;
 	if (isValidEGN(value)) return ColumnType::EGN;

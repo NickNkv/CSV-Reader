@@ -23,6 +23,8 @@ public:
 	const char* getDelimiter() const { return delimiter; }
 	void setDelimiter(const char* delimiter);
 
+	const Cell* getCellAt(size_t row, size_t col);
+
 	//mechanics
 	void addColumn(Column& column);
 	void removeColumn(size_t index);
@@ -30,7 +32,8 @@ public:
 	void changeColumnOrder();
 	void removeDuplicateRows();
 	void changeColumnName(size_t index);
-
+	void editCell();
+	bool populateTable(const char* fileName);
 
 private:
 	char* name;
@@ -39,4 +42,5 @@ private:
 	size_t allocatedCapacity;
 	char* delimiter;
 	Column** columns;
+	bool isEmpty;
 };

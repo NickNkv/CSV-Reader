@@ -3,6 +3,7 @@
 #include "utils.hpp"
 #include "column.hpp"
 #include "table.hpp"
+#include "fstream"
 
 int main() {
 	//Cell a;
@@ -62,6 +63,12 @@ int main() {
 		}
 	}*/
 	Table table;
+	table.populateTable("output.csv");
 
+	for (size_t i = 0; i < table.getRowCount(); i++) {
+		for (size_t j = 0; j < table.getColCount(); j++) {
+			std::cout << table.getCellAt(i, j)->getValue();
+		}
+	}
 	return 0;
 }

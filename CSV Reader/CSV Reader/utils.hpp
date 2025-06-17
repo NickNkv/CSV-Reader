@@ -4,5 +4,6 @@
 
 namespace util {
 	const char* columnTypeToStr(ColumnType type);
+	ColumnType strToColumnType(const char* str);
 	ColumnType detectType(const char* value);
 }
