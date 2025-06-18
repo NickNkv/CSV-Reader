@@ -1,12 +1,14 @@
 #include <iostream>
-#include "cell.hpp"
-#include "utils.hpp"
-#include "column.hpp"
-#include "table.hpp"
-#include "fstream"
+#include "controls.hpp"
 
 int main() {
-	//Cell a;
+	controls::run();
+
+	return 0;
+}
+
+/* TESTS
+//Cell a;
 	//Cell b("b");
 	//char word[10];
 	//std::cin >> word;
@@ -61,14 +63,15 @@ int main() {
 		else {
 			std::cout << i << ": NULL\n";
 		}
-	}*/
-	Table table;
-	table.populateTable("output.csv");
-
-	for (size_t i = 0; i < table.getRowCount(); i++) {
-		for (size_t j = 0; j < table.getColCount(); j++) {
-			std::cout << table.getCellAt(i, j)->getValue();
-		}
 	}
-	return 0;
+Table table;
+table.populateTable("output.csv");
+
+for (size_t i = 0; i < table.getRowCount(); i++) {
+	for (size_t j = 0; j < table.getColCount(); j++) {
+		std::cout << table.getCellAt(i, j)->getValue();
+	}
 }
+
+table.printTable();
+*/

@@ -34,6 +34,7 @@ public:
 	void changeColumnName(size_t index);
 	void editCell();
 	bool populateTable(const char* fileName);
+	void printTable();
 
 private:
 	char* name;
@@ -43,4 +44,5 @@ private:
 	char* delimiter;
 	Column** columns;
 	bool isEmpty;
+	unsigned int width; //keeps the length of the longest value (out of every column), used to later display the table (spacings)
 };

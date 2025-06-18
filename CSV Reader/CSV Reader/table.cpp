@@ -18,6 +18,7 @@ Table::Table() {
 	this->rowCount = 0;
 	this->allocatedCapacity = BONUS_CAPACITY;
 	this->isEmpty = true;
+	this->width = 0;
 
 	this->delimiter = new (std::nothrow) char[2];
 	if (!this->delimiter) {
@@ -44,6 +45,7 @@ Table::Table(const char* name) {
 	this->colCount = 0;
 	this->rowCount = 0;
 	this->isEmpty = true;
+	this->width = 0;
 	this->allocatedCapacity = BONUS_CAPACITY;
 
 	this->name = new (std::nothrow) char[strlen(name) + 1];
@@ -75,6 +77,7 @@ Table::Table(const Table& other) {
 	this->colCount = other.colCount;
 	this->rowCount = other.rowCount;
 	this->isEmpty = other.isEmpty;
+	this->width = other.width;
 	this->allocatedCapacity = other.allocatedCapacity;
 
 	this->name = new (std::nothrow) char[strlen(other.name) + 1];
@@ -210,6 +213,7 @@ Table& Table::operator=(const Table& other) {
 	this->colCount = other.colCount;
 	this->rowCount = other.rowCount; 
 	this->isEmpty = other.isEmpty;
+	this->width = other.width;
 	this->allocatedCapacity = other.allocatedCapacity;
 
 	return *this;
@@ -280,6 +284,7 @@ bool Table::populateTable(const char* fileName) {
 	if (!isEmpty) {
 		std::cout << "This table is not empty!\n"
 			<< "Empty the table first, then fill with data!\n";
+		return false;
 	}
 
 	//open file
@@ -291,18 +296,13 @@ bool Table::populateTable(const char* fileName) {
 	}
 
 	char line[MAX_LINE_LEN];
-	char* types[MAX_COLS]; //col types
-	char* names[MAX_COLS]; //col names
+	char* data[MAX_COLS]; //col types
 
 	// 1 - get column types
 	file.getline(line, MAX_LINE_LEN);
-	size_t colNum = parceCSVLine(line, types);
+	size_t colNum = parceCSVLine(line, data);
 
-	// 2 - get column names
-	file.getline(line, MAX_LINE_LEN);
-	size_t nameNum = parceCSVLine(line, names);
-
-	// 3 - alocate cols if needed
+	// 2 - alocate cols if needed
 	if (this->allocatedCapacity < colNum) {
 		Column** temp = new (std::nothrow) Column * [colNum + BONUS_CAPACITY];
 		if (!temp) {
@@ -322,9 +322,9 @@ bool Table::populateTable(const char* fileName) {
 	}
 	this->colCount = colNum;
 
-	// 4 - create cols
+	// 3 - create cols
 	for (size_t i = 0; i < this->colCount; i++) {
-		this->columns[i] = new (std::nothrow) Column(util::strToColumnType(types[i]), names[i]);
+		this->columns[i] = new (std::nothrow) Column(util::strToColumnType(data[i]), "temp");
 		if (!this->columns[i]) {
 			for (size_t j = 0; j < i; j++) {
 				delete this->columns[j];
@@ -332,29 +332,28 @@ bool Table::populateTable(const char* fileName) {
 
 			std::cout << "Memory allocation error, try again!\n";
 			file.close();
-			//for (size_t i = 0; i < MAX_COLS; i++) {
-			//	delete[] types[i];
-			//	delete[] names[i];
-			//}
 			return false;
 		}
 	}
 
-	//types is no longer needed, we will use names to populate the data
-	/*for (size_t i = 0; i < MAX_COLS; i++) {
-		delete[] types[i];
-	}*/
+	// 4 - get column names
+	file.getline(line, MAX_LINE_LEN);
+	size_t nameNum = parceCSVLine(line, data);
+
+	for (size_t i = 0; i < this->colCount; i++) {
+		this->columns[i]->setName(data[i]);
+	}
 
 	// 5 - save data
 	while (file.getline(line, MAX_LINE_LEN)) {
-		size_t count = parceCSVLine(line, names);
+		size_t count = parceCSVLine(line, data);
 		if (count != colNum) {
 			std::cout << "Column count mismatch!\n";
 			continue;
 		}
 		for (size_t i = 0; i < colNum; i++) {
 			try {
-				Cell temp(names[i]);
+				Cell temp(data[i]);
 				bool flag = this->columns[i]->addCell(temp);
 
 				if (!flag) throw std::bad_alloc();
@@ -370,6 +369,35 @@ bool Table::populateTable(const char* fileName) {
 		}
 		this->rowCount += 1;
 	}
+
+	// *6 - set the width
+	for (size_t i = 0; i < this->colCount; i++) {
+		if (this->columns[i]->getWidth() > this->width) {
+			this->width = this->columns[i]->getWidth();
+		}
+	}
 		
 	return true;
+}
+
+void Table::printTable() {
+	// data types
+	for (size_t i = 0; i < this->colCount; i++) {
+		std::cout << util::columnTypeToStr(this->columns[i]->getType()) << this->delimiter;
+	}
+	std::cout << std::endl;
+
+	// column names
+	for (size_t i = 0; i < this->colCount; i++) {
+		std::cout << this->columns[i]->getName() << this->delimiter;
+	}
+	std::cout << std::endl;
+
+	// data
+	for (size_t i = 0; i < this->rowCount; i++) {
+		for (size_t j = 0; j < this->colCount; j++) {
+			std::cout << this->columns[j]->getCellAt(i)->getValue() << this->delimiter;
+		}
+	}
+	std::cout << "\n\n";
 }
