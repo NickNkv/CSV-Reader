@@ -34,6 +34,7 @@ public:
 	bool addCell(Cell& cell);
 	const Cell* getCellAt(size_t index);
 	void removeCellAt(size_t index);
+	bool swapTwoCells(size_t first, size_t second); // indexes of the two cells
 
 private:
 	void expandCollection(); //allocates new [size + BONUS_CAPACITY] cell* 

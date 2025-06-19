@@ -339,6 +339,17 @@ void Column::removeCellAt(size_t index) {
 	this->size -= 1;
 }
 
+bool Column::swapTwoCells(size_t first, size_t second) {
+	if (first < 0 || second < 0 || first >= this->size || second >= this->size) {
+		return false;
+	}
+
+	Cell* temp = this->cells[first];
+	this->cells[first] = this->cells[second];
+	this->cells[second] = temp;
+	return true;
+}
+
 //private methods for internal work
 void Column::expandCollection() {
 	Cell** tempCollection = new (std::nothrow) Cell*[this->size + 1 + BONUS_CAPACITY];

@@ -376,18 +376,21 @@ bool Table::populateTable(const char* fileName) {
 			this->width = this->columns[i]->getWidth();
 		}
 	}
-		
+
+	file.close();
 	return true;
 }
 
 void Table::printTable() {
 	// data types
+	std::cout << "   ";
 	for (size_t i = 0; i < this->colCount; i++) {
 		std::cout << util::columnTypeToStr(this->columns[i]->getType()) << this->delimiter;
 	}
 	std::cout << std::endl;
 
 	// column names
+	std::cout << "   ";
 	for (size_t i = 0; i < this->colCount; i++) {
 		std::cout << this->columns[i]->getName() << this->delimiter;
 	}
@@ -395,9 +398,54 @@ void Table::printTable() {
 
 	// data
 	for (size_t i = 0; i < this->rowCount; i++) {
+		std::cout << i + 1 << " | ";
 		for (size_t j = 0; j < this->colCount; j++) {
 			std::cout << this->columns[j]->getCellAt(i)->getValue() << this->delimiter;
 		}
+		std::cout << "\n";
 	}
 	std::cout << "\n\n";
+}
+
+bool Table::sort(size_t index, bool ascending) {
+	if (index < 0 || index >= this->colCount) {
+		return false;
+	}
+
+	bool result = true;
+	for (size_t i = 0; i < this->rowCount - 1; i++) {
+		for (size_t j = i + 1; j < this->rowCount; j++) {
+			int cmp = util::compareCells(this->columns[index]->getCellAt(i), this->columns[index]->getCellAt(j), this->columns[index]->getType());
+
+			if ((ascending && cmp > 0) || (!ascending && cmp < 0)) {
+				result = swapRows(i, j);
+			}
+		}
+	}
+
+	return result;
+}
+
+bool Table::sortByColName(const char* name, bool ascending) {
+	for (size_t i = 0; i < this->colCount; i++) {
+		if (strcmp(name, this->columns[i]->getName()) == 0) {
+			return sort(i, ascending);
+		}
+	}
+	
+	//name not found
+	return false;
+}
+
+bool Table::swapRows(size_t first, size_t second) {
+	if (first < 0 || second < 0 || first >= this->rowCount || second >= this->rowCount) {
+		return false;
+	}
+
+	bool result = false;
+	for (size_t i = 0; i < this->colCount; i++) {
+		result = this->columns[i]->swapTwoCells(first, second);
+	}
+
+	return result;
 }

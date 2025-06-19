@@ -1,10 +1,14 @@
 #include "controls.hpp"
 #include "iostream"
+#include <fstream>
 #include "table.hpp"
+#include "utils.hpp"
 
 #define MAX_FILE_NAME 128
 
-Table table;
+Table* table = nullptr;
+bool isLoaded = false;
+char fileName[MAX_FILE_NAME];
 
 void clearInputBuffer() {
 	char ch;
@@ -14,15 +18,55 @@ void clearInputBuffer() {
 }
 
 bool openExistingFile() {
-	char fileName[MAX_FILE_NAME];
+	//char fileName[MAX_FILE_NAME];
 	std::cout << "Enter file name: ";
 	clearInputBuffer();
 	std::cin.getline(fileName, MAX_FILE_NAME);
-	bool isOpened = table.populateTable(fileName);
+	bool isOpened = (*table).populateTable(fileName);
 	std::cout << "\n";
 	return isOpened;
 }
 
+//sorting by column
+bool sort() {
+	char colOption[MAX_FILE_NAME];
+	char orderOption[MAX_FILE_NAME];
+
+	std::cout << "Sort by column. Enter column name/number: ";
+	clearInputBuffer();
+	std::cin.getline(colOption, MAX_FILE_NAME);
+
+	std::cout << "Ascending or descending (asc/desc): ";
+	clearInputBuffer();
+	std::cin.getline(orderOption, MAX_FILE_NAME);
+
+	bool ascending = true;
+	if (strcmp(orderOption, "asc") == 0) {
+		ascending = true;
+	}
+	else if (strcmp(orderOption, "desc") == 0) {
+		ascending = false;
+	}
+	else {
+		ascending = true;
+	}
+
+	//column can be found via name or order
+	if (util::isNum(colOption)) {
+		return (*table).sort(atoi(colOption) - 1, ascending);
+	}
+	else {
+		return (*table).sortByColName(colOption, ascending);
+	}
+}
+
+bool saveChanges() {
+	std::ofstream out(fileName);
+	//if (!out.is_open())
+	return true;
+}
+
+//menu when we have populated table
 void tableManipulationMenu() {
 	int option = 0;
 	do {
@@ -33,26 +77,54 @@ void tableManipulationMenu() {
 			<< "4 - Add column\n"
 			<< "5 - Delete column\n"
 			<< "6 - Change column name\n"
-			<< "7 - Exit program"
+			<< "7 - Save changes\n"
+			<< "8 - Settings\n"
+			<< "9 - Exit"
 			<< std::endl;
 
 		std::cout << "Option: ";
 		std::cin >> option;
 
-		if (option < 1 || option > 7) {
+		bool flag = false;
+		if (option == 1) {
+			flag = sort();
+			if (!flag) {
+				std::cout << "Sort returned error, please try again!" << std::endl;
+			}
+
+			(*table).printTable();
+		}
+		else if (option == 2) {
+			
+		}
+		else if (option == 7) {
+			flag = saveChanges();
+		}
+		else if (option == 9) {
+			return;
+		}
+		else {
 			std::cout << "Invalid option!\n";
 			continue;
-		}
-
-		if (option == 1) {
-
 		}
 
 	} while (true);
 }
 
+//initial start of the program
 void controls::run() {
-	//initial start of the program
+	//create new empty table if there isnt one already
+	if (!isLoaded) {
+		try {
+			table = new Table();
+		}
+		catch (const std::exception& e) {
+			std::cout << "Error occured in initial run() function!\n";
+			std::cout << e.what();
+			return;
+		}
+	}
+
 	int option = 0;
 	do {
 		std::cout 
@@ -63,15 +135,13 @@ void controls::run() {
 		std::cout << "Option: ";
 		std::cin >> option;
 
-		if (option < 1 || option > 3) {
-			std::cout << "Invalid option!\n";
-			continue;
-		}
-
 		//existing file options
 		if (option == 1) {
 			bool isOpened = openExistingFile();
-			table.printTable();
+			if (isOpened) {
+				(*table).printTable();
+				tableManipulationMenu();
+			}
 		}
 		else if (option == 2) {
 
@@ -80,8 +150,9 @@ void controls::run() {
 			return;
 		}
 		else {
-
+			std::cout << "Invalid option!\n";
+			continue;
 		}
 	} 
-	while (option != 4);
+	while (true);
 }

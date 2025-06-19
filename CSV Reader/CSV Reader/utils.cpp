@@ -1,14 +1,34 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "utils.hpp"
 #include <cstring>
+#include <cstdlib>
 
-//other
 bool isNumber(const char* value) {
-	size_t size = strlen(value);
-	for (size_t i = 0; i < size; i++) {
-		if (value[i] < '0' || value[i] > '9') return false;
+	if (!value || *value == '\0') {
+		return false;
 	}
 
-	return true;
+	int i = 0;
+
+	// Check for sign
+	if (value[i] == '-' || value[i] == '+') {
+		i++;
+	}
+
+	bool hasDigits = false;
+	for (; value[i]; ++i) {
+		if (value[i] >= '0' && value[i] <= '9') {
+			hasDigits = true;
+		}
+		else if (value[i] == '.' || value[i] == ',') {
+			continue;
+		}
+		else {
+			return false;
+		}
+	}
+
+	return hasDigits;
 }
 
 //the method for EGN checking was taken from wikipedia
@@ -157,3 +177,100 @@ ColumnType util::detectType(const char* value) {
 	if (isNumber(value)) return ColumnType::Number;
 	return ColumnType::Text;
 }
+
+bool util::isNum(const char* value) {
+	return isNumber(value);
+}
+
+int util::compareCells(const Cell* a, const Cell* b, ColumnType type) {
+	switch (type) {
+	case ColumnType::Number: {
+		double numA = atof(a->getValue());
+		double numB = atof(b->getValue());
+
+		return numA < numB ? -1 : (numA > numB ? 1 : 0);
+	}
+	case ColumnType::Currency: {
+		size_t lenA = strlen(a->getValue());
+		size_t lenB = strlen(b->getValue());
+		if (lenA < 4 || lenB < 4) {
+			return 0;
+		}
+
+		char numStrA[64];
+		char numStrB[64];
+		strncpy(numStrA, a->getValue(), lenA - 3);
+		numStrA[lenA - 3] = '\0';
+
+		strncpy(numStrB, b->getValue(), lenB - 3);
+		numStrB[lenB - 3] = '\0';
+
+		double numA = atof(numStrA);
+		double numB = atof(numStrB);
+
+		return numA < numB ? -1 : (numA > numB ? 1 : 0);
+	}
+	case ColumnType::Text:
+		return strcmp(a->getValue(), b->getValue());
+	case ColumnType::EGN: {
+		int yearA = (a->getValue()[0] - '0') * 10 + (a->getValue()[1] - '0');
+		int monthA = (a->getValue()[2] - '0') * 10 + (a->getValue()[3] - '0');
+		int dayA = (a->getValue()[4] - '0') * 10 + (a->getValue()[5] - '0');
+
+		//date check
+		if (monthA >= 1 && monthA <= 12) {
+			yearA += 1900;
+		}
+		else if (monthA >= 21 && monthA <= 32) {
+			yearA += 1800;
+			monthA -= 20;
+		}
+		else if (monthA >= 41 && monthA <= 52) {
+			yearA += 2000;
+			monthA -= 40;
+		}
+		else {
+			return false;
+		}
+
+		int yearB = (b->getValue()[0] - '0') * 10 + (b->getValue()[1] - '0');
+		int monthB = (b->getValue()[2] - '0') * 10 + (b->getValue()[3] - '0');
+		int dayB = (b->getValue()[4] - '0') * 10 + (b->getValue()[5] - '0');
+
+		//date check
+		if (monthB >= 1 && monthB <= 12) {
+			yearB += 1900;
+		}
+		else if (monthB >= 21 && monthB <= 32) {
+			yearB += 1800;
+			monthB -= 20;
+		}
+		else if (monthB >= 41 && monthB <= 52) {
+			yearB += 2000;
+			monthB -= 40;
+		}
+		else {
+			return false;
+		}
+
+		if (yearA < yearB) return -1;
+		else if (yearA > yearB) return 1;
+		else {
+			if (monthA < monthB) return -1;
+			else if (monthA > monthB) return 1;
+			else {
+				if (dayA < dayB) return -1;
+				else if (dayA > dayB) return 1;
+				else return 0;
+			}
+		}
+	}
+	case ColumnType::FacultyNumber: {
+		return strcmp(a->getValue(), b->getValue());
+	}
+	default:
+		return 0;
+	}
+}
+
+

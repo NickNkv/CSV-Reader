@@ -27,14 +27,18 @@ public:
 
 	//mechanics
 	void addColumn(Column& column);
-	void removeColumn(size_t index);
-	void copyColumn(size_t index);
-	void changeColumnOrder();
-	void removeDuplicateRows();
-	void changeColumnName(size_t index);
-	void editCell();
+	//void removeColumn(size_t index);
+	//void copyColumn(size_t index);
+	//void changeColumnOrder();
+	//void removeDuplicateRows();
+	//void changeColumnName(size_t index);
+	//void editCell();
+
 	bool populateTable(const char* fileName);
 	void printTable();
+	bool sort(size_t index, bool ascending = true);
+	bool sortByColName(const char* name, bool ascending = true);
+	bool swapRows(size_t first, size_t second); //indexes of the two rows
 
 private:
 	char* name;
