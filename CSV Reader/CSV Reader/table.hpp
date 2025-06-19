@@ -43,6 +43,9 @@ public:
 	bool sortByColName(const char* name, bool ascending = true);
 	bool swapRows(size_t first, size_t second); //indexes of the two rows
 	void emptyTable();
+	bool rowsEqual(size_t first, size_t second);
+	void removeIdenticalRows();
+	void removeRow(size_t index);
 
 
 private:

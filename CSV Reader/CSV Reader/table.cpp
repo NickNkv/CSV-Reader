@@ -494,3 +494,43 @@ void Table::emptyTable() {
 	this->width = 0;
 	this->isEmpty = true;
 }
+
+bool Table::rowsEqual(size_t first, size_t second) {
+	if (first < 0 || second < 0 || first >= this->rowCount || second >= this->rowCount) {
+		std::cout << "Invalid index for comparing rows!\n";
+		return false;
+	}
+
+	for (size_t i = 0; i < this->colCount; i++) {
+		const char* valA = this->columns[i]->getCellAt(first)->getValue();
+		const char* valB = this->columns[i]->getCellAt(second)->getValue();
+		if (strcmp(valA, valB) != 0) return false;
+	}
+
+	return true;
+}
+
+void Table::removeIdenticalRows() {
+	for (size_t i = 0; i < this->rowCount; i++) {
+		for (size_t j = i + 1; j < this->rowCount; ) {
+			if (rowsEqual(i, j)) {
+				removeRow(j);
+			}
+			else {
+				j++;
+			}
+		}
+	}
+}
+
+void Table::removeRow(size_t index) {
+	if (index < 0 || index >= this->rowCount) {
+		std::cout << "Invalid index for removal of a row\n";
+		return;
+	}
+
+	for (size_t i = 0; i < this->colCount; i++) {
+		this->columns[i]->removeCellAt(index);
+	}
+	this->rowCount -= 1;
+}

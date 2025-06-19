@@ -121,7 +121,9 @@ void tableManipulationMenu() {
 			isChanged = true;
 		}
 		else if (option == 3) {
-			//flag = (*table).removeIdenticalRows();
+			(*table).removeIdenticalRows();
+			(*table).printTable();
+			isChanged = true;
 		}
 		else if (option == 7) {
 			flag = saveChanges();
