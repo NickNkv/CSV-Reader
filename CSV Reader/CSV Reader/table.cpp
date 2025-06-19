@@ -265,10 +265,6 @@ const Cell* Table::getCellAt(size_t row, size_t col) {
 }
 
 //mechanics
-void Table::addColumn(Column& column) {
-
-}
-
 size_t parceCSVLine(char* line, char** fields, char delimiter = ',') {
 	size_t count = 0;
 	char* token = strtok(line, &delimiter);
@@ -377,7 +373,41 @@ bool Table::populateTable(const char* fileName) {
 		}
 	}
 
+	this->isEmpty = false;
 	file.close();
+	return true;
+}
+
+bool Table::saveToFile(const char* fileName) {
+	std::ofstream out(fileName);
+	if (!out.is_open()) {
+		return false;
+	}
+
+	// 1 - column types
+	for (size_t i = 0; i < this->colCount; i++) {
+		out << util::columnTypeToStr(this->columns[i]->getType());
+		if (i < this->colCount - 1) out << ",";
+	}
+	out << '\n';
+
+	// 2 - column names
+	for (size_t i = 0; i < this->colCount; i++) {
+		out << this->columns[i]->getName();
+		if (i < this->colCount - 1) out << ",";
+	}
+	out << '\n';
+
+	// 3 - data
+	for (size_t i = 0; i < this->rowCount; i++) {
+		for (size_t j = 0; j < this->colCount; j++) {
+			out << this->columns[j]->getCellAt(i)->getValue();
+			if (j < this->colCount - 1) out << ",";
+		}
+		out << '\n';
+	}
+
+	out.close();
 	return true;
 }
 
@@ -385,14 +415,16 @@ void Table::printTable() {
 	// data types
 	std::cout << "   ";
 	for (size_t i = 0; i < this->colCount; i++) {
-		std::cout << util::columnTypeToStr(this->columns[i]->getType()) << this->delimiter;
+		std::cout << util::columnTypeToStr(this->columns[i]->getType());
+		if (i < this->colCount - 1) std::cout << this->delimiter;
 	}
 	std::cout << std::endl;
 
 	// column names
 	std::cout << "   ";
 	for (size_t i = 0; i < this->colCount; i++) {
-		std::cout << this->columns[i]->getName() << this->delimiter;
+		std::cout << this->columns[i]->getName();
+		if (i < this->colCount - 1) std::cout << this->delimiter;
 	}
 	std::cout << std::endl;
 
@@ -400,7 +432,8 @@ void Table::printTable() {
 	for (size_t i = 0; i < this->rowCount; i++) {
 		std::cout << i + 1 << " | ";
 		for (size_t j = 0; j < this->colCount; j++) {
-			std::cout << this->columns[j]->getCellAt(i)->getValue() << this->delimiter;
+			std::cout << this->columns[j]->getCellAt(i)->getValue();
+			if (j < this->colCount - 1) std::cout << this->delimiter;
 		}
 		std::cout << "\n";
 	}
@@ -448,4 +481,16 @@ bool Table::swapRows(size_t first, size_t second) {
 	}
 
 	return result;
+}
+
+void Table::emptyTable() {
+	for (size_t i = 0; i < this->colCount; i++) {
+		for (size_t j = this->rowCount - 1; j > 0; j--) {
+			this->columns[i]->removeCellAt(j);
+		}
+	}
+	this->rowCount = 0;
+	this->colCount = 0;
+	this->width = 0;
+	this->isEmpty = true;
 }

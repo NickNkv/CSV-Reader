@@ -23,10 +23,12 @@ public:
 	const char* getDelimiter() const { return delimiter; }
 	void setDelimiter(const char* delimiter);
 
+	bool isTableEmpty() const { return isEmpty; }
+
 	const Cell* getCellAt(size_t row, size_t col);
 
 	//mechanics
-	void addColumn(Column& column);
+	//void addColumn(Column& column);
 	//void removeColumn(size_t index);
 	//void copyColumn(size_t index);
 	//void changeColumnOrder();
@@ -35,10 +37,13 @@ public:
 	//void editCell();
 
 	bool populateTable(const char* fileName);
+	bool saveToFile(const char* fileName);
 	void printTable();
 	bool sort(size_t index, bool ascending = true);
 	bool sortByColName(const char* name, bool ascending = true);
 	bool swapRows(size_t first, size_t second); //indexes of the two rows
+	void emptyTable();
+
 
 private:
 	char* name;

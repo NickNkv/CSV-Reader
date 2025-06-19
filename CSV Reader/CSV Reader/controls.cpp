@@ -37,7 +37,6 @@ bool sort() {
 	std::cin.getline(colOption, MAX_FILE_NAME);
 
 	std::cout << "Ascending or descending (asc/desc): ";
-	clearInputBuffer();
 	std::cin.getline(orderOption, MAX_FILE_NAME);
 
 	bool ascending = true;
@@ -61,14 +60,37 @@ bool sort() {
 }
 
 bool saveChanges() {
-	std::ofstream out(fileName);
-	//if (!out.is_open())
-	return true;
+	int option = 0;
+	do {
+		std::cout
+				<< "1 - Save to current file\n"
+				<< "2 - Save to another/new file"
+				<< std::endl;
+
+		std::cout << "Option: ";
+		std::cin >> option;
+
+		if (option == 1) {
+			return (*table).saveToFile(fileName);
+		}
+		else if (option == 2) {
+			char newFile[MAX_FILE_NAME];
+			std::cout << "Enter the destination file name: ";
+			clearInputBuffer();
+			std::cin.getline(newFile, MAX_FILE_NAME);
+			return (*table).saveToFile(newFile);
+		}
+		else {
+			std::cout << "Invalid option!\n";
+			continue;
+		}
+	} while (true);
 }
 
 //menu when we have populated table
 void tableManipulationMenu() {
 	int option = 0;
+	bool isChanged = false;
 	do {
 		std::cout 
 			<< "1 - Sort\n"
@@ -78,8 +100,9 @@ void tableManipulationMenu() {
 			<< "5 - Delete column\n"
 			<< "6 - Change column name\n"
 			<< "7 - Save changes\n"
-			<< "8 - Settings\n"
-			<< "9 - Exit"
+			<< "8 - Undo\n"
+			<< "9 - Settings\n"
+			<< "10 - Exit"
 			<< std::endl;
 
 		std::cout << "Option: ";
@@ -88,21 +111,50 @@ void tableManipulationMenu() {
 		bool flag = false;
 		if (option == 1) {
 			flag = sort();
-			if (!flag) {
-				std::cout << "Sort returned error, please try again!" << std::endl;
-			}
+
+			if (flag) isChanged = true;
+			else std::cout << "Sort returned error, please try again!" << std::endl;
 
 			(*table).printTable();
 		}
 		else if (option == 2) {
-			
+			isChanged = true;
+		}
+		else if (option == 3) {
+			//flag = (*table).removeIdenticalRows();
 		}
 		else if (option == 7) {
 			flag = saveChanges();
-		}
-		else if (option == 9) {
+
+			if (flag) {
+				isChanged = false;
+				std::cout << "Changes saved!";
+			}
+			else std::cout << "Save changes returned error, please try again!" << std::endl;
+			(*table).printTable();
+		} 
+		else if (option == 10) { 
+			//exit
+			if (isChanged) {
+				std::cout << "There are unsaved changes!\nDo you want to save them (yes/no): ";
+				char answer[5];
+				clearInputBuffer();
+				std::cin.getline(answer, 4);
+				if (strcmp(answer, "yes") == 0) {
+					flag = saveChanges();
+
+					if (flag) {
+						isChanged = false;
+						std::cout << "Changes saved!";
+					}
+					else std::cout << "Save changes returned error, please try again!" << std::endl;
+					continue;
+				}
+			}
+			std::cout << "\n";
+			(*table).emptyTable();
 			return;
-		}
+		} 
 		else {
 			std::cout << "Invalid option!\n";
 			continue;
@@ -117,6 +169,7 @@ void controls::run() {
 	if (!isLoaded) {
 		try {
 			table = new Table();
+			isLoaded = true;
 		}
 		catch (const std::exception& e) {
 			std::cout << "Error occured in initial run() function!\n";
@@ -142,6 +195,7 @@ void controls::run() {
 				(*table).printTable();
 				tableManipulationMenu();
 			}
+			continue;
 		}
 		else if (option == 2) {
 
