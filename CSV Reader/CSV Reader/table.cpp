@@ -264,6 +264,45 @@ const Cell* Table::getCellAt(size_t row, size_t col) {
 	return this->columns[col]->getCellAt(row);
 }
 
+bool Table::addColumn(Column& column) {
+	//if allocated space is NOT enough for one more column
+	if (this->colCount + 1 > this->allocatedCapacity) {
+		expandCollection();
+	}
+
+	this->columns[this->colCount] = new (std::nothrow) Column(column);
+	if (!this->columns[this->colCount]) {
+		std::cerr << "Memory allocation error while adding new column! Try again!" << std::endl;
+		return false;
+	}
+
+	this->colCount++;
+	return true;
+}
+
+void Table::expandCollection() {
+	Column** tempCollection = new (std::nothrow) Column * [this->colCount + 1 + BONUS_CAPACITY];
+	if (!tempCollection) {
+		throw std::bad_alloc();
+	}
+
+	//copying the columns pointers
+	for (size_t i = 0; i < this->colCount; i++) {
+		tempCollection[i] = this->columns[i];
+	}
+
+	//nullptr-ing the rest of the allocated memory
+	for (size_t i = this->colCount; i < this->colCount + 1 + BONUS_CAPACITY; i++) {
+		tempCollection[i] = nullptr;
+	}
+
+	delete[] this->columns;
+	this->columns = tempCollection;
+	this->allocatedCapacity = this->colCount + 1 + BONUS_CAPACITY;
+
+	//std::cout << "Collection expanded\n";
+}
+
 //mechanics
 size_t parceCSVLine(char* line, char** fields, char delimiter = ',') {
 	size_t count = 0;

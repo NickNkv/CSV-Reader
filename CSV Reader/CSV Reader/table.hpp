@@ -28,7 +28,7 @@ public:
 	const Cell* getCellAt(size_t row, size_t col);
 
 	//mechanics
-	//void addColumn(Column& column);
+	bool addColumn(Column& column);
 	//void removeColumn(size_t index);
 	//void copyColumn(size_t index);
 	//void changeColumnOrder();
@@ -47,6 +47,8 @@ public:
 	void removeIdenticalRows();
 	void removeRow(size_t index);
 
+private:
+	void expandCollection();
 
 private:
 	char* name;

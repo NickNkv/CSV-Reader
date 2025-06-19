@@ -2,6 +2,7 @@
 #include "iostream"
 #include <fstream>
 #include "table.hpp"
+#include "column.hpp"
 #include "utils.hpp"
 
 #define MAX_FILE_NAME 128
@@ -56,6 +57,36 @@ bool sort() {
 	}
 	else {
 		return (*table).sortByColName(colOption, ascending);
+	}
+}
+
+bool addColumn() {
+	try {
+		Column col;
+		char name[MAX_FILE_NAME];
+		std::cout << "Enter the column name: ";
+		clearInputBuffer();
+		std::cin.getline(name, MAX_FILE_NAME);
+		col.setName(name);
+
+		col.setType();
+
+		std::cout << "Add data:" << std::endl;
+		clearInputBuffer();
+		for (size_t i = 0; i < (*table).getRowCount(); i++) {
+			std::cout << i + 1 << ": ";
+			std::cin.getline(name, MAX_FILE_NAME);
+
+			Cell temp(name);
+			col.addCell(temp);
+		}
+
+		return (*table).addColumn(col);
+	}
+	catch (std::exception& e) {
+		std::cout << "Error while adding new column!\n";
+		std::cout << e.what();
+		return false;
 	}
 }
 
@@ -125,12 +156,20 @@ void tableManipulationMenu() {
 			(*table).printTable();
 			isChanged = true;
 		}
+		else if (option == 4) {
+			flag = addColumn();
+			if (flag) {
+				isChanged = true;
+				std::cout << "\nColumn added!\n\n";
+			}
+			(*table).printTable();
+		}
 		else if (option == 7) {
 			flag = saveChanges();
 
 			if (flag) {
 				isChanged = false;
-				std::cout << "Changes saved!";
+				std::cout << "Changes saved!" << std::endl;
 			}
 			else std::cout << "Save changes returned error, please try again!" << std::endl;
 			(*table).printTable();
