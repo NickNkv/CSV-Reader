@@ -153,6 +153,35 @@ bool saveChanges() {
 	} while (true);
 }
 
+//settings panel
+void settingsMenu() {
+	int option = 0;
+	do
+	{
+		std::cout
+			<< "1 - Change delimiter\n"
+			<< "2 - Exit\n"
+			<< std::endl;
+
+		std::cout << "Option: ";
+		std::cin >> option;
+
+		if (option == 1) {
+			char newDeliimiter[6];
+			std::cout << "Enter new delimiter (up to 5 symbols): ";
+			clearInputBuffer();
+			std::cin.getline(newDeliimiter, 6);
+			(*table).setDelimiter(newDeliimiter);
+		}
+		else if (option == 2) {
+			return;
+		}
+		else {
+			std::cout << "\nInvalid option, try again!\n";
+		}
+	} while (true);
+}
+
 //menu when we have populated table
 void tableManipulationMenu() {
 	int option = 0;
@@ -184,7 +213,7 @@ void tableManipulationMenu() {
 			(*table).printTable();
 		}
 		else if (option == 2) {
-			isChanged = true;
+			isChanged = false;
 		}
 		else if (option == 3) {
 			(*table).removeIdenticalRows();
@@ -227,6 +256,12 @@ void tableManipulationMenu() {
 			else std::cout << "Save changes returned error, please try again!" << std::endl;
 			(*table).printTable();
 		} 
+		else if (option == 8) {
+		}
+		else if (option == 9) {
+			settingsMenu();
+			(*table).printTable();
+		}
 		else if (option == 10) { 
 			//exit
 			if (isChanged) {
