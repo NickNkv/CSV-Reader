@@ -149,6 +149,10 @@ void duplicateCol() {
 	}
 }
 
+void changeColOrder() {
+
+}
+
 bool changeColName() {
 	char newName[MAX_FILE_NAME];
 	char colName[MAX_FILE_NAME];
@@ -198,6 +202,44 @@ bool saveChanges() {
 	} while (true);
 }
 
+void endOfTableOptionsMenu() {
+	std::cout << "\n";
+	(*table).printTable();
+	int option = 0;
+	do {
+		std::cout
+			<< "Add row to the end of the table\n"
+			<< "1 - Copy row\n"
+			<< "2 - Min values\n"
+			<< "3 - Max values\n"
+			<< "4 - Most frequent\n"
+			<< "5 - Exit\n"
+			<< std::endl;
+
+		std::cout << "Option: ";
+		std::cin >> option;
+
+		if (option == 1) {
+
+		}
+		else if (option == 2) {
+			(*table).addExtremeValues(true);
+			(*table).printTable();
+		}
+		else if (option == 3) {
+			(*table).addExtremeValues(false);
+			(*table).printTable();
+		}
+		else if (option == 5) {
+			return;
+		}
+		else {
+			std::cout << "\nInvalid option, try again!\n";
+		}
+	} while (true);
+
+}
+
 //settings panel
 void settingsMenu() {
 	int option = 0;
@@ -239,12 +281,13 @@ void tableManipulationMenu() {
 			<< "4 - Add column\n"
 			<< "5 - Delete column\n"
 			<< "6 - DuplicateColumn\n"
-			<< "7 - Change column name\n"
-			<< "8 - Save changes\n"
-			<< "9 - Undo\n"
-			<< "10 - Add-to-end-of-table options\n"
-			<< "11 - Settings\n"
-			<< "12 - Exit"
+			<< "7 - Change column order\n"
+			<< "8 - Change column name\n"
+			<< "9 - Save changes\n"
+			<< "10 - Undo\n"
+			<< "11 - Add-to-end-of-table options\n"
+			<< "12 - Settings\n"
+			<< "13 - Exit"
 			<< std::endl;
 
 		std::cout << "Option: ";
@@ -292,6 +335,9 @@ void tableManipulationMenu() {
 			(*table).printTable();
 		}
 		else if (option == 7) {
+			changeColOrder();
+		}
+		else if (option == 8) {
 			flag = changeColName();
 			if (flag) {
 				isChanged = true;
@@ -301,7 +347,7 @@ void tableManipulationMenu() {
 			}
 			(*table).printTable();
 		}
-		else if (option == 8) {
+		else if (option == 9) {
 			flag = saveChanges();
 
 			if (flag) {
@@ -311,17 +357,19 @@ void tableManipulationMenu() {
 			else std::cout << "Save changes returned error, please try again!" << std::endl;
 			(*table).printTable();
 		} 
-		else if (option == 9) {
-
-		}
 		else if (option == 10) {
 
 		}
 		else if (option == 11) {
+			endOfTableOptionsMenu();
+			isChanged = true;
+			(*table).printTable();
+		}
+		else if (option == 12) {
 			settingsMenu();
 			(*table).printTable();
 		}
-		else if (option == 12) { 
+		else if (option == 13) { 
 			//exit
 			if (isChanged) {
 				std::cout << "\nThere are unsaved changes!\nDo you want to save them (yes/no): ";

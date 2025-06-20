@@ -655,3 +655,20 @@ void Table::duplicateColumn(size_t index) {
 	this->columns[this->colCount] = duplicate;
 	this->colCount++;
 }
+
+void Table::addExtremeValues(bool min) {
+	for (size_t i = 0; i < this->colCount; i++) {
+		size_t targetIndex = 0;
+		for (size_t j = 1; j < this->rowCount; j++) {
+			int cmp = util::compareCells(this->columns[i]->getCellAt(targetIndex), this->columns[i]->getCellAt(j), this->columns[i]->getType());
+
+			if ((min && cmp > 0) || (!min && cmp < 0)) {
+				targetIndex = j;
+			}
+		}
+		Cell temp(this->columns[i]->getCellAt(targetIndex)->getValue());
+		this->columns[i]->addCell(temp);
+	}
+
+	this->rowCount++;
+}

@@ -49,6 +49,7 @@ public:
 	bool changeColumnName(size_t index, const char* name);
 	void filter(size_t index, const char* condStr, const char* value);
 	void duplicateColumn(size_t index);
+	void addExtremeValues(bool min);
 
 private:
 	void expandCollection();
