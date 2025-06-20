@@ -9,6 +9,10 @@
 
 Table* table = nullptr;
 bool isLoaded = false;
+
+Table* tableSnapshot = nullptr;
+bool step = false;
+
 char fileName[MAX_FILE_NAME];
 
 void clearInputBuffer() {
@@ -48,7 +52,8 @@ bool sort() {
 		ascending = false;
 	}
 	else {
-		ascending = true;
+		std::cout << "Invalid sort option!\n";
+		return false;
 	}
 
 	//column can be found via name or order
@@ -133,7 +138,7 @@ bool deleteCol() {
 	}
 }
 
-void duplicateCol() {
+bool duplicateCol() {
 	char colName[MAX_FILE_NAME];
 
 	std::cout << "Choose a column to duplicate (name/number): ";
@@ -142,15 +147,18 @@ void duplicateCol() {
 
 	//column can be found via name or order
 	if (util::isNum(colName)) {
-		(*table).duplicateColumn(atoi(colName) - 1);
+		return (*table).duplicateColumn(atoi(colName) - 1);
 	}
 	else {
-		(*table).duplicateColumn((*table).findColByName(colName));
+		return (*table).duplicateColumn((*table).findColByName(colName));
 	}
 }
 
-void changeColOrder() {
-
+bool changeColOrder() {
+	char input[MAX_FILE_NAME];
+	std::cout << "Enter the new col orde (ex. 2 1 3): ";
+	clearInputBuffer();
+	return true;
 }
 
 bool changeColName() {
@@ -202,7 +210,31 @@ bool saveChanges() {
 	} while (true);
 }
 
-void endOfTableOptionsMenu() {
+void saveUndoSnapshot(bool& step) {
+	if (!step) {
+		(*tableSnapshot) = (*table);
+		step = true;
+	}
+	else {
+		step = false;
+	}
+}
+
+void undoChanges() {
+	char option[MAX_FILE_NAME];
+	std::cout << "Do you want to undo changes (yes/no): ";
+	clearInputBuffer();
+	std::cin.getline(option, MAX_FILE_NAME);
+
+	if (strcmp(option, "yes") == 0) {
+		(*table) = (*tableSnapshot);
+	}
+	else {
+		return;
+	}
+}
+
+void endOfTableOptionsMenu(bool& isChanged) {
 	std::cout << "\n";
 	(*table).printTable();
 	int option = 0;
@@ -224,10 +256,14 @@ void endOfTableOptionsMenu() {
 		}
 		else if (option == 2) {
 			(*table).addExtremeValues(true);
+			isChanged = true;
+			saveUndoSnapshot(step);
 			(*table).printTable();
 		}
 		else if (option == 3) {
 			(*table).addExtremeValues(false);
+			isChanged = true;
+			saveUndoSnapshot(step);
 			(*table).printTable();
 		}
 		else if (option == 5) {
@@ -297,18 +333,23 @@ void tableManipulationMenu() {
 		if (option == 1) {
 			flag = sort();
 
-			if (flag) isChanged = true;
+			if (flag) {
+				isChanged = true;
+				saveUndoSnapshot(step);
+			}
 			else std::cout << "Sort returned error, please try again!" << std::endl;
 
 			(*table).printTable();
 		}
 		else if (option == 2) {
 			filterTable();
+			saveUndoSnapshot(step);
 			(*table).printTable();
 			isChanged = true;
 		}
 		else if (option == 3) {
 			(*table).removeIdenticalRows();
+			saveUndoSnapshot(step);
 			(*table).printTable();
 			isChanged = true;
 		}
@@ -316,6 +357,7 @@ void tableManipulationMenu() {
 			flag = addColumn();
 			if (flag) {
 				isChanged = true;
+				saveUndoSnapshot(step);
 				std::cout << "\nColumn added!\n\n";
 			}
 			(*table).printTable();
@@ -324,23 +366,29 @@ void tableManipulationMenu() {
 			flag = deleteCol();
 			if (flag) {
 				isChanged = true;
+				saveUndoSnapshot(step);
 			}
 
 			(*table).printTable();
 		}
 		else if (option == 6) {
-			duplicateCol();
-			isChanged = true;
+			flag = duplicateCol();
+			if (flag) {
+				isChanged = true;
+				saveUndoSnapshot(step);
+			}
+
 			std::cout << "\n";
 			(*table).printTable();
 		}
 		else if (option == 7) {
-			changeColOrder();
+			flag = changeColOrder();
 		}
 		else if (option == 8) {
 			flag = changeColName();
 			if (flag) {
 				isChanged = true;
+				saveUndoSnapshot(step);
 			}
 			else {
 				std::cout << "Unable to change name, try again!\n\n";
@@ -358,11 +406,11 @@ void tableManipulationMenu() {
 			(*table).printTable();
 		} 
 		else if (option == 10) {
-
+			undoChanges();
+			(*table).printTable();
 		}
 		else if (option == 11) {
-			endOfTableOptionsMenu();
-			isChanged = true;
+			endOfTableOptionsMenu(isChanged);
 			(*table).printTable();
 		}
 		else if (option == 12) {
@@ -405,8 +453,9 @@ void controls::run() {
 	//create new empty table if there isnt one already
 	if (!isLoaded) {
 		try {
-			table = new Table();
+			table = new Table("t1"); //name could be changed
 			isLoaded = true;
+			tableSnapshot = new Table("t1");
 		}
 		catch (const std::exception& e) {
 			std::cout << "Error occured in initial run() function!\n";
@@ -430,6 +479,7 @@ void controls::run() {
 			bool isOpened = openExistingFile();
 			if (isOpened) {
 				(*table).printTable();
+				saveUndoSnapshot(step);
 				tableManipulationMenu();
 			}
 			continue;

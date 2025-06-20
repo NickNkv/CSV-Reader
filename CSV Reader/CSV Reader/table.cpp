@@ -642,10 +642,21 @@ void Table::filter(size_t index, const char* condStr, const char* value) {
 //}
 
 
-void Table::duplicateColumn(size_t index) {
+bool Table::duplicateColumn(size_t index) {
 	if (index < 0 || index >= this->colCount) {
 		std::cout << "Invalid index for removal of a row\n";
-		return;
+		return false;
+	}
+
+	//is allocated space is not enough for one more column
+	if (this->colCount + 1 > this->allocatedCapacity) {
+		try {
+			expandCollection();
+		}
+		catch (std::exception& e) {
+			std::cout << e.what() << "\n";
+			return false;
+		}
 	}
 
 	//const char* newName = generateUniqueColumnName(this->columns[index]->getName());
@@ -654,6 +665,8 @@ void Table::duplicateColumn(size_t index) {
 
 	this->columns[this->colCount] = duplicate;
 	this->colCount++;
+
+	return true;
 }
 
 void Table::addExtremeValues(bool min) {
