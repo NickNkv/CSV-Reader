@@ -50,6 +50,7 @@ public:
 	void filter(size_t index, const char* condStr, const char* value);
 	bool duplicateColumn(size_t index);
 	void addExtremeValues(bool min);
+	void copyRow(size_t index);
 
 private:
 	void expandCollection();

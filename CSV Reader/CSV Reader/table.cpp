@@ -517,7 +517,7 @@ bool Table::saveToFile(const char* fileName) {
 
 void Table::printTable() {
 	// data types
-	std::cout << "   ";
+	std::cout << "    ";
 	for (size_t i = 0; i < this->colCount; i++) {
 		std::cout << util::columnTypeToStr(this->columns[i]->getType());
 		if (i < this->colCount - 1) std::cout << this->delimiter;
@@ -525,7 +525,7 @@ void Table::printTable() {
 	std::cout << std::endl;
 
 	// column names
-	std::cout << "   ";
+	std::cout << "    ";
 	for (size_t i = 0; i < this->colCount; i++) {
 		std::cout << this->columns[i]->getName();
 		if (i < this->colCount - 1) std::cout << this->delimiter;
@@ -729,6 +729,28 @@ void Table::addExtremeValues(bool min) {
 		}
 		Cell temp(this->columns[i]->getCellAt(targetIndex)->getValue());
 		this->columns[i]->addCell(temp);
+	}
+
+	this->rowCount++;
+}
+
+void Table::copyRow(size_t index) {
+	if (index < 0 || index >= this->rowCount) {
+		std::cout << "Invalid index when copying row!\n";
+		return;
+	}
+
+	for (size_t i = 0; i < this->colCount; i++) {
+		Cell* tempCell = new (std::nothrow) Cell(*this->columns[i]->getCellAt(index));
+		if (!tempCell) {
+			for (size_t j = 0; j < i; j++) {
+				this->columns[j]->removeCellAt(this->rowCount);
+			}
+			std::cout << "Memory allocation error!\n";
+			return;
+		}
+
+		this->columns[i]->addCell(*tempCell);
 	}
 
 	this->rowCount++;

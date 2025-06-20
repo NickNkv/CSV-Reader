@@ -1,5 +1,6 @@
 #define	_CRT_SECURE_NO_WARNINGS
 #include "column.hpp"
+#include "utils.hpp"
 #include <iostream>
 #include <exception>
 
@@ -10,7 +11,7 @@ Column::Column() {
 	this->size = 0;
 	this->allocatedCapacity = BONUS_CAPACITY;
 	this->type = ColumnType::Text;
-	this->width = 0;
+	this->width = strlen(util::columnTypeToStr(this->type));
 	this->name = nullptr;
 
 	this->cells = new (std::nothrow) Cell*[this->allocatedCapacity];
@@ -28,7 +29,7 @@ Column::Column(ColumnType type, const char* name) {
 	this->size = 0;
 	this->allocatedCapacity = BONUS_CAPACITY;
 	this->type = type;
-	this->width = 0;
+	this->width = strlen(util::columnTypeToStr(this->type));;
 
 	if (strlen(name) == 0) {
 		throw std::invalid_argument("Name can not be empty string");
@@ -228,6 +229,12 @@ void Column::setType() {
 	default: 
 		break;
 	}
+
+	//change the width
+	unsigned tempWidth = strlen(util::columnTypeToStr(this->type));
+	if (tempWidth > this->width) {
+		this->width = tempWidth;
+	}
 }
 
 bool Column::setName(const char* name) {
@@ -246,6 +253,12 @@ bool Column::setName(const char* name) {
 	strcpy(tempName, name);
 	this->name = tempName;
 	tempName = nullptr;
+
+	//change the width
+	if (strlen(this->name) > this->width) {
+		this->width = strlen(this->name);
+	}
+
 	return true;
 }
 
@@ -338,6 +351,14 @@ void Column::removeCellAt(size_t index) {
 	this->cells[this->size - 1] = nullptr;
 
 	this->size -= 1;
+
+	//change the width
+	this->width = 0;
+	for (size_t i = 0; i < this->size; i++) {
+		if (strlen(this->cells[i]->getValue()) > this->width) {
+			this->width = strlen(this->cells[i]->getValue());
+		}
+	}
 }
 
 bool Column::swapTwoCells(size_t first, size_t second) {

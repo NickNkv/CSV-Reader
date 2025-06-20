@@ -234,6 +234,24 @@ bool saveChanges() {
 	} while (true);
 }
 
+void copyRow() {
+	char option[10];
+	std::cout << "Enter row number (0 for exit): ";
+	clearInputBuffer();
+	std::cin.getline(option, 10);
+	if (util::isNum(option)) {
+		if (atoi(option) == 0) {
+			return;
+		}
+		else {
+			(*table).copyRow(atoi(option) - 1);
+		}
+	}
+	else {
+		std::cout << "Invalid input!\n";
+	}
+}
+
 void saveUndoSnapshot() {
 	(*tableSnapshot) = (*table);
 }
@@ -270,7 +288,10 @@ void endOfTableOptionsMenu(bool& isChanged) {
 		std::cin >> option;
 
 		if (option == 1) {
-
+			saveUndoSnapshot();
+			copyRow();
+			isChanged = true;
+			(*table).printTable();
 		}
 		else if (option == 2) {
 			saveUndoSnapshot();
