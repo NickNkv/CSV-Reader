@@ -515,33 +515,67 @@ bool Table::saveToFile(const char* fileName) {
 	return true;
 }
 
-void Table::printTable() {
+void Table::printTable(int code) {
 	// data types
 	std::cout << "    ";
 	for (size_t i = 0; i < this->colCount; i++) {
-		std::cout << util::columnTypeToStr(this->columns[i]->getType());
-		if (i < this->colCount - 1) std::cout << this->delimiter;
+		if (code == 1) {
+			util::printPadded(util::columnTypeToStr(this->columns[i]->getType()), this->columns[i]->getWidth());
+			std::cout << " " << this->delimiter << " ";
+		}
+		else {
+			std::cout << util::columnTypeToStr(this->columns[i]->getType());
+			if (i < this->colCount - 1) std::cout << this->delimiter;
+		}
 	}
-	std::cout << std::endl;
+	std::cout << "\n";
 
 	// column names
 	std::cout << "    ";
 	for (size_t i = 0; i < this->colCount; i++) {
-		std::cout << this->columns[i]->getName();
-		if (i < this->colCount - 1) std::cout << this->delimiter;
+		if (code == 1) {
+			util::printPadded(this->columns[i]->getName(), this->columns[i]->getWidth());
+			std::cout << " " << this->delimiter << " ";
+		}
+		else {
+			std::cout << this->columns[i]->getName();
+			if (i < this->colCount - 1) std::cout << this->delimiter;
+		}
 	}
-	std::cout << std::endl;
+	std::cout << "\n";
+
+	if (code == 1) {
+		// Print separator
+		std::cout << "    ";
+		for (size_t i = 0; i < this->colCount; i++) {
+			for (size_t j = 0; j < this->columns[i]->getWidth(); j++) {
+				std::cout << '-';
+			}
+			std::cout << " " << this->delimiter << " ";
+		}
+		std::cout << '\n';
+	}
 
 	// data
 	for (size_t i = 0; i < this->rowCount; i++) {
 		std::cout << i + 1 << " | ";
 		for (size_t j = 0; j < this->colCount; j++) {
-			std::cout << this->columns[j]->getCellAt(i)->getValue();
-			if (j < this->colCount - 1) std::cout << this->delimiter;
+			if (code == 1) {
+				const char* value = this->columns[j]->getCellAt(i)->getValue();
+				if (value)
+					util::printPadded(value, this->columns[j]->getWidth());
+				else
+					util::printPadded("NULL", this->columns[j]->getWidth());
+				std::cout << " " << this->delimiter << " ";
+			}
+			else {
+				std::cout << this->columns[j]->getCellAt(i)->getValue();
+				if (j < this->colCount - 1) std::cout << this->delimiter;
+			}
 		}
-		std::cout << "\n";
+		std::cout << '\n';
 	}
-	std::cout << "\n\n";
+	std::cout << '\n';
 }
 
 bool Table::sort(size_t index, bool ascending) {

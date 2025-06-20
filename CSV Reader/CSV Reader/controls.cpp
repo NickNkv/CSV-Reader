@@ -12,6 +12,8 @@
 Table* table = nullptr;
 bool isLoaded = false;
 
+int visualizationOption = 0;
+
 Table* tableSnapshot = nullptr;
 
 char fileName[MAX_FILE_NAME];
@@ -265,7 +267,7 @@ void undoChanges() {
 
 void endOfTableOptionsMenu(bool& isChanged) {
 	std::cout << "\n";
-	(*table).printTable();
+	(*table).printTable(visualizationOption);
 	int option = 0;
 	do {
 		std::cout
@@ -284,19 +286,19 @@ void endOfTableOptionsMenu(bool& isChanged) {
 			saveUndoSnapshot();
 			copyRow();
 			isChanged = true;
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 2) {
 			saveUndoSnapshot();
 			(*table).addExtremeValues(true);
 			isChanged = true;
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 3) {
 			saveUndoSnapshot();
 			(*table).addExtremeValues(false);
 			isChanged = true;
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 5) {
 			return;
@@ -335,6 +337,29 @@ bool editCell() {
 	}
 }
 
+void visualizationMenu() {
+	int option = 0;
+	std::cout
+		<< "Choose style:\n"
+		<< "1 - Default\n"
+		<< "2 - Fancy"
+		<< std::endl;
+
+	std::cout << "Option: ";
+	std::cin >> option;
+	std::cout << "\n";
+
+	if (option == 1) {
+		visualizationOption = 0;
+	}
+	else if (option == 2) {
+		visualizationOption = 1;
+	}
+	else {
+		visualizationOption = 0;
+	}
+}
+
 //settings panel
 void settingsMenu() {
 	int option = 0;
@@ -342,7 +367,8 @@ void settingsMenu() {
 	{
 		std::cout
 			<< "1 - Change delimiter\n"
-			<< "2 - Exit\n"
+			<< "2 - Change visualization\n"
+			<< "3 - Exit\n"
 			<< std::endl;
 
 		std::cout << "Option: ";
@@ -356,6 +382,9 @@ void settingsMenu() {
 			(*table).setDelimiter(newDeliimiter);
 		}
 		else if (option == 2) {
+			visualizationMenu();
+		}
+		else if (option == 3) {
 			return;
 		}
 		else {
@@ -400,18 +429,18 @@ void tableManipulationMenu() {
 			}
 			else std::cout << "Sort returned error, please try again!" << std::endl;
 
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 2) {
 			saveUndoSnapshot();
 			filterTable();
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 			isChanged = true;
 		}
 		else if (option == 3) {
 			saveUndoSnapshot();
 			(*table).removeIdenticalRows();
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 			isChanged = true;
 		}
 		else if (option == 4) {
@@ -421,7 +450,7 @@ void tableManipulationMenu() {
 				isChanged = true;
 				std::cout << "\nColumn added!\n\n";
 			}
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 5) {
 			saveUndoSnapshot();
@@ -430,7 +459,7 @@ void tableManipulationMenu() {
 				isChanged = true;
 			}
 
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 6) {
 			saveUndoSnapshot();
@@ -440,7 +469,7 @@ void tableManipulationMenu() {
 			}
 
 			std::cout << "\n";
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 7) {
 			saveUndoSnapshot();
@@ -448,7 +477,7 @@ void tableManipulationMenu() {
 			if (flag) {
 				isChanged = true;
 			}
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 8) {
 			saveUndoSnapshot();
@@ -459,7 +488,7 @@ void tableManipulationMenu() {
 			else {
 				std::cout << "Unable to change name, try again!\n\n";
 			}
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 9) {
 			flag = saveChanges();
@@ -469,20 +498,20 @@ void tableManipulationMenu() {
 				std::cout << "Changes saved!" << std::endl;
 			}
 			else std::cout << "Save changes returned error, please try again!" << std::endl;
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		} 
 		else if (option == 10) {
 			undoChanges();
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 11) {
 			endOfTableOptionsMenu(isChanged);
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 12) {
 			saveUndoSnapshot();
 			isChanged = editCell();
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 13) {
 			saveUndoSnapshot();
@@ -492,11 +521,11 @@ void tableManipulationMenu() {
 			catch (std::exception& e) {
 				std::cout << e.what() << std::endl;
 			}
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 14) {
 			settingsMenu();
-			(*table).printTable();
+			(*table).printTable(visualizationOption);
 		}
 		else if (option == 15) { 
 			//exit
@@ -559,7 +588,7 @@ void controls::run() {
 		if (option == 1) {
 			bool isOpened = openExistingFile();
 			if (isOpened) {
-				(*table).printTable();
+				(*table).printTable(visualizationOption);
 				saveUndoSnapshot();
 				tableManipulationMenu();
 			}

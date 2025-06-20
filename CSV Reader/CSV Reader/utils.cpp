@@ -412,4 +412,13 @@ void util::clearInputBuffer() {
 	}
 }
 
-
+void util::printPadded(const char* value, unsigned width) {
+	int len = 0;
+	if (value) {
+		len = strlen(value);
+		std::cout << value;
+	}
+	for (int i = 0; i < width - len; i++) {
+		std::cout << ' ';
+	}
+}

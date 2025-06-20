@@ -13,4 +13,5 @@ namespace util {
 	bool filterCompare(const char* lhs, const char* rhs, Condition cond, ColumnType type);
 	Condition strToCondition(const char* cond);
 	void clearInputBuffer();
+	void printPadded(const char* value, unsigned width);
 }

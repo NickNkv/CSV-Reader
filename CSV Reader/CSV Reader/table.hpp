@@ -29,7 +29,7 @@ public:
 
 	//mechanics
 	void removeColumnAt(size_t index);
-	void printTable();
+	void printTable(int code = 0);
 	void emptyTable();
 	void removeIdenticalRows();
 	void removeRow(size_t index);

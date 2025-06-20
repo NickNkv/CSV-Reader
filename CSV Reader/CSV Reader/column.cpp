@@ -364,6 +364,9 @@ void Column::removeCellAt(size_t index) {
 	//change the width
 	this->width = 0;
 	for (size_t i = 0; i < this->size; i++) {
+		if (!this->cells[i]) {
+			continue;
+		}
 		if (strlen(this->cells[i]->getValue()) > this->width) {
 			this->width = strlen(this->cells[i]->getValue());
 		}
