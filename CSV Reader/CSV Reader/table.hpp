@@ -31,7 +31,7 @@ public:
 	bool addColumn(Column& column);
 	void removeColumnAt(size_t index);
 	//void copyColumn(size_t index);
-	//void changeColumnOrder();
+	bool changeColumnOrder(unsigned* order, unsigned size);
 	//void removeDuplicateRows();
 	//void changeColumnName(size_t index);
 	//void editCell();

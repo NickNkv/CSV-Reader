@@ -203,7 +203,7 @@ void Column::setType() {
 				<< "2 - Number\n"
 				<< "3 - Currency\n"
 				<< "4 - EGN\n"
-				<< "5 - FacultyNumber"
+				<< "5 - Faculty Number\n"
 				<< "6 - Cancel"
 				<< std::endl;
 		

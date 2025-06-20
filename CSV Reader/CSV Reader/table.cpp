@@ -297,6 +297,54 @@ void Table::removeColumnAt(size_t index) {
 	this->colCount -= 1;
 }
 
+bool Table::changeColumnOrder(unsigned* order, unsigned size) {
+	if (this->colCount != size) {
+		std::cout << "Not complete set of positions!\n\n";
+		return false;
+	}
+
+	bool* seen = new (std::nothrow) bool[size + 1];
+	if (!seen) {
+		std::cout << "Memory allocation error!\n\n";
+		return false;
+	}
+
+	for (unsigned i = 0; i < size; i++) {
+		if (order[i] < 1 || order[i] > this->colCount) {
+			delete[] seen;
+			std::cout << "Not complete set of positions!\n\n";
+			return false;
+		}
+		seen[order[i]] = true;
+	}
+
+	//check if all numbers from one to colCount are present
+	for (unsigned i = 1; i <= size; i++) {
+		if (!seen[i]) {
+			delete[] seen;
+			std::cout << "Not complete set of positions!\n\n";
+			return false;
+		}
+	}
+
+	//change of columns order
+	Column** newCols = new (std::nothrow) Column * [size];
+	if (!newCols) {
+		std::cout << "Memory allocation error!\n\n";
+		return false;
+	}
+	for (size_t i = 0; i < size; i++) {
+		size_t index = order[i] - 1;
+		newCols[i] = this->columns[index];
+	}
+
+	delete[] this->columns;
+	this->columns = newCols;
+
+	delete[] seen;
+	return true;
+}
+
 void Table::expandCollection() {
 	Column** tempCollection = new (std::nothrow) Column * [this->colCount + 1 + BONUS_CAPACITY];
 	if (!tempCollection) {
