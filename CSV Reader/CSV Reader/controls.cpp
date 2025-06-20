@@ -300,6 +300,9 @@ void endOfTableOptionsMenu(bool& isChanged) {
 			isChanged = true;
 			(*table).printTable(visualizationOption);
 		}
+		else if (option == 4) {
+
+		}
 		else if (option == 5) {
 			return;
 		}
@@ -558,6 +561,18 @@ void tableManipulationMenu() {
 	} while (true);
 }
 
+void newFile() {
+	std::cout << "Enter file name: ";
+	util::clearInputBuffer();
+	std::cin.getline(fileName, MAX_FILE_NAME);
+
+	addColumn();
+	saveChanges();
+	(*table).printTable(visualizationOption);
+	saveUndoSnapshot();
+	tableManipulationMenu();
+}
+
 //initial start of the program
 void controls::run() {
 	//create new empty table if there isnt one already
@@ -595,7 +610,7 @@ void controls::run() {
 			continue;
 		}
 		else if (option == 2) {
-
+			newFile();
 		}
 		else if (option == 3) {
 			return;
