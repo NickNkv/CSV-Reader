@@ -115,16 +115,37 @@ bool addColumn() {
 }
 
 bool deleteCol() {
-	size_t index = 0;
-	std::cout << "Which column do you want to delete (0 for exit): ";
-	std::cin >> index;
+	char option[MAX_FILE_NAME];
+	std::cout << "Which column do you want to delete ('no' to cancel): ";
+	clearInputBuffer();
+	std::cin.getline(option, MAX_FILE_NAME);
 
-	if (index == 0) {
+	if (strcmp(option, "no") == 0) {
 		return false;
 	}
-	else {
-		(*table).removeColumnAt(index - 1);
+	else if (util::isNum(option)) {
+		(*table).removeColumnAt(atoi(option) - 1);
 		return true;
+	}
+	else {
+		(*table).removeColumnAt((*table).findColByName(option));
+		return true;
+	}
+}
+
+void duplicateCol() {
+	char colName[MAX_FILE_NAME];
+
+	std::cout << "Choose a column to duplicate (name/number): ";
+	clearInputBuffer();
+	std::cin.getline(colName, MAX_FILE_NAME);
+
+	//column can be found via name or order
+	if (util::isNum(colName)) {
+		(*table).duplicateColumn(atoi(colName) - 1);
+	}
+	else {
+		(*table).duplicateColumn((*table).findColByName(colName));
 	}
 }
 
@@ -217,12 +238,13 @@ void tableManipulationMenu() {
 			<< "3 - Remove identical rows\n"
 			<< "4 - Add column\n"
 			<< "5 - Delete column\n"
-			<< "6 - Change column name\n"
-			<< "7 - Save changes\n"
-			<< "8 - Undo\n"
-			<< "9 - Add-to-end-of-table options\n"
-			<< "9 - Settings\n"
-			<< "10 - Exit"
+			<< "6 - DuplicateColumn\n"
+			<< "7 - Change column name\n"
+			<< "8 - Save changes\n"
+			<< "9 - Undo\n"
+			<< "10 - Add-to-end-of-table options\n"
+			<< "11 - Settings\n"
+			<< "12 - Exit"
 			<< std::endl;
 
 		std::cout << "Option: ";
@@ -264,6 +286,12 @@ void tableManipulationMenu() {
 			(*table).printTable();
 		}
 		else if (option == 6) {
+			duplicateCol();
+			isChanged = true;
+			std::cout << "\n";
+			(*table).printTable();
+		}
+		else if (option == 7) {
 			flag = changeColName();
 			if (flag) {
 				isChanged = true;
@@ -273,7 +301,7 @@ void tableManipulationMenu() {
 			}
 			(*table).printTable();
 		}
-		else if (option == 7) {
+		else if (option == 8) {
 			flag = saveChanges();
 
 			if (flag) {
@@ -283,13 +311,17 @@ void tableManipulationMenu() {
 			else std::cout << "Save changes returned error, please try again!" << std::endl;
 			(*table).printTable();
 		} 
-		else if (option == 8) {
-		}
 		else if (option == 9) {
+
+		}
+		else if (option == 10) {
+
+		}
+		else if (option == 11) {
 			settingsMenu();
 			(*table).printTable();
 		}
-		else if (option == 10) { 
+		else if (option == 12) { 
 			//exit
 			if (isChanged) {
 				std::cout << "\nThere are unsaved changes!\nDo you want to save them (yes/no): ";

@@ -48,9 +48,11 @@ public:
 	void removeRow(size_t index);
 	bool changeColumnName(size_t index, const char* name);
 	void filter(size_t index, const char* condStr, const char* value);
+	void duplicateColumn(size_t index);
 
 private:
 	void expandCollection();
+	const char* generateUniqueColumnName(const char* initName);
 
 private:
 	char* name;

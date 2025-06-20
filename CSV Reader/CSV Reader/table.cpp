@@ -618,3 +618,40 @@ void Table::filter(size_t index, const char* condStr, const char* value) {
 		}
 	}
 }
+
+//const char* Table::generateUniqueColumnName(const char* initName) {
+//	char buffer[128];
+//	int suffix = 1;
+//
+//	while (true) {
+//		snprintf(buffer, sizeof(buffer), "%s_%d", initName, suffix);
+//
+//		bool exists = false;
+//		for (int i = 0; i < this->colCount; i++) {
+//			if (strcmp(columns[i]->getName(), buffer) == 0) {
+//				exists = true;
+//				break;
+//			}
+//		}
+//
+//		if (!exists) break;
+//		suffix++;
+//	}
+//
+//	return buffer;
+//}
+
+
+void Table::duplicateColumn(size_t index) {
+	if (index < 0 || index >= this->colCount) {
+		std::cout << "Invalid index for removal of a row\n";
+		return;
+	}
+
+	//const char* newName = generateUniqueColumnName(this->columns[index]->getName());
+
+	Column* duplicate = new Column(*this->columns[index]);
+
+	this->columns[this->colCount] = duplicate;
+	this->colCount++;
+}
