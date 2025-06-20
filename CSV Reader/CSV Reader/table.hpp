@@ -28,29 +28,27 @@ public:
 	const Cell* getCellAt(size_t row, size_t col);
 
 	//mechanics
-	bool addColumn(Column& column);
 	void removeColumnAt(size_t index);
-	//void copyColumn(size_t index);
-	bool changeColumnOrder(unsigned* order, unsigned size);
-	//void removeDuplicateRows();
-	//void changeColumnName(size_t index);
-	//void editCell();
-
-	bool populateTable(const char* fileName);
-	bool saveToFile(const char* fileName);
 	void printTable();
-	bool sort(size_t index, bool ascending = true);
-	long long findColByName(const char* name);
-	bool swapRows(size_t first, size_t second); //indexes of the two rows
 	void emptyTable();
-	bool rowsEqual(size_t first, size_t second);
 	void removeIdenticalRows();
 	void removeRow(size_t index);
-	bool changeColumnName(size_t index, const char* name);
 	void filter(size_t index, const char* condStr, const char* value);
-	bool duplicateColumn(size_t index);
 	void addExtremeValues(bool min);
 	void copyRow(size_t index);
+	bool changeColumnOrder(unsigned* order, unsigned size);
+	bool addColumn(Column& column);
+	bool populateTable(const char* fileName);
+	bool saveToFile(const char* fileName);
+	bool sort(size_t index, bool ascending = true);
+	bool swapRows(size_t first, size_t second); //indexes of the two rows
+	bool rowsEqual(size_t first, size_t second);
+	bool changeColumnName(size_t index, const char* name);
+	bool duplicateColumn(size_t index);
+	bool editCell(size_t col, size_t cell, const char* newValue);
+	bool addRow();
+	long long findColByName(const char* name);
+	
 
 private:
 	void expandCollection();

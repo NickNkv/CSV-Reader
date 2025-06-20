@@ -12,4 +12,5 @@ namespace util {
 	int compareCells(const Cell* a, const Cell* b, ColumnType type);
 	bool filterCompare(const char* lhs, const char* rhs, Condition cond, ColumnType type);
 	Condition strToCondition(const char* cond);
+	void clearInputBuffer();
 }

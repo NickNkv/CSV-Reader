@@ -335,6 +335,15 @@ const Cell* Column::getCellAt(size_t index) {
 	return this->cells[index];
 }
 
+void Column::changeCellValue(size_t index, const char* newValue) {
+	if (index < 0 || index >= this->size) {
+		std::cout << "Invalid index!\n";
+		return;
+	}
+
+	this->cells[index]->setValue(newValue);
+}
+
 void Column::removeCellAt(size_t index) {
 	if (index < 0 || index >= this->size) {
 		std::cout << "Invalid index!\n";

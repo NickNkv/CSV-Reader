@@ -16,17 +16,10 @@ Table* tableSnapshot = nullptr;
 
 char fileName[MAX_FILE_NAME];
 
-void clearInputBuffer() {
-	char ch;
-	while ((ch = std::cin.get()) != '\n' && ch != EOF) {
-		// discard leftover characters
-	}
-}
-
 bool openExistingFile() {
 	//char fileName[MAX_FILE_NAME];
 	std::cout << "Enter file name: ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(fileName, MAX_FILE_NAME);
 	bool isOpened = (*table).populateTable(fileName);
 	std::cout << "\n";
@@ -39,7 +32,7 @@ bool sort() {
 	char orderOption[6];
 
 	std::cout << "Sort by column. Enter column name/number: ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(colOption, MAX_FILE_NAME);
 
 	std::cout << "Ascending or descending (asc/desc): ";
@@ -72,7 +65,7 @@ void filterTable() {
 	char value[MAX_FILE_NAME];
 
 	std::cout << "Choose column by wich to filter (name/number): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(colName, MAX_FILE_NAME);
 
 	std::cout << "Enter condition (==, !=, <, <=, >, >=): ";
@@ -95,14 +88,14 @@ bool addColumn() {
 		Column col;
 		char name[MAX_FILE_NAME];
 		std::cout << "Enter the column name: ";
-		clearInputBuffer();
+		util::clearInputBuffer();
 		std::cin.getline(name, MAX_FILE_NAME);
 		col.setName(name);
 
 		col.setType();
 
 		std::cout << "Add data:" << std::endl;
-		clearInputBuffer();
+		util::clearInputBuffer();
 		for (size_t i = 0; i < (*table).getRowCount(); i++) {
 			std::cout << i + 1 << ": ";
 			std::cin.getline(name, MAX_FILE_NAME);
@@ -123,7 +116,7 @@ bool addColumn() {
 bool deleteCol() {
 	char option[MAX_FILE_NAME];
 	std::cout << "Which column do you want to delete ('no' to cancel): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(option, MAX_FILE_NAME);
 
 	if (strcmp(option, "no") == 0) {
@@ -143,7 +136,7 @@ bool duplicateCol() {
 	char colName[MAX_FILE_NAME];
 
 	std::cout << "Choose a column to duplicate (name/number): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(colName, MAX_FILE_NAME);
 
 	//column can be found via name or order
@@ -158,7 +151,7 @@ bool duplicateCol() {
 bool changeColOrder() {
 	char input[MAX_FILE_NAME];
 	std::cout << "Enter the new col orde (ex. 2 1 3): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(input, MAX_FILE_NAME);
 
 	unsigned count = 0;
@@ -190,7 +183,7 @@ bool changeColName() {
 	char colName[MAX_FILE_NAME];
 
 	std::cout << "Choose the column for name-change (name/number): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(colName, MAX_FILE_NAME);
 
 	std::cout << "Enter new name: ";
@@ -223,7 +216,7 @@ bool saveChanges() {
 		else if (option == 2) {
 			char newFile[MAX_FILE_NAME];
 			std::cout << "Enter the destination file name: ";
-			clearInputBuffer();
+			util::clearInputBuffer();
 			std::cin.getline(newFile, MAX_FILE_NAME);
 			return (*table).saveToFile(newFile);
 		}
@@ -237,7 +230,7 @@ bool saveChanges() {
 void copyRow() {
 	char option[10];
 	std::cout << "Enter row number (0 for exit): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(option, 10);
 	if (util::isNum(option)) {
 		if (atoi(option) == 0) {
@@ -259,7 +252,7 @@ void saveUndoSnapshot() {
 void undoChanges() {
 	char option[MAX_FILE_NAME];
 	std::cout << "Do you want to undo changes (yes/no): ";
-	clearInputBuffer();
+	util::clearInputBuffer();
 	std::cin.getline(option, MAX_FILE_NAME);
 
 	if (strcmp(option, "yes") == 0) {
@@ -312,7 +305,34 @@ void endOfTableOptionsMenu(bool& isChanged) {
 			std::cout << "\nInvalid option, try again!\n";
 		}
 	} while (true);
+}
 
+bool editCell() {
+	char colName[MAX_FILE_NAME];
+	char colNum[10];
+	char newData[MAX_FILE_NAME];
+
+	std::cout << "Choose the column (name/number): ";
+	util::clearInputBuffer();
+	std::cin.getline(colName, MAX_FILE_NAME);
+
+	std::cout << "Choose row (number): ";
+	std::cin.getline(colNum, 10);
+
+	std::cout << "Enter new value: ";
+	std::cin.getline(newData, MAX_FILE_NAME);
+
+	if (!util::isNum(colNum)) {
+		std::cout << "Invalid input!\n";
+		return false;
+	}
+
+	if (util::isNum(colName)) {
+		return (*table).editCell(atoi(colName) - 1, atoi(colNum) - 1, newData);
+	}
+	else {
+		return (*table).editCell((*table).findColByName(colName), atoi(colNum) - 1, newData);
+	}
 }
 
 //settings panel
@@ -331,7 +351,7 @@ void settingsMenu() {
 		if (option == 1) {
 			char newDeliimiter[6];
 			std::cout << "Enter new delimiter (up to 5 symbols): ";
-			clearInputBuffer();
+			util::clearInputBuffer();
 			std::cin.getline(newDeliimiter, 6);
 			(*table).setDelimiter(newDeliimiter);
 		}
@@ -361,8 +381,10 @@ void tableManipulationMenu() {
 			<< "9 - Save changes\n"
 			<< "10 - Undo\n"
 			<< "11 - Add-to-end-of-table options\n"
-			<< "12 - Settings\n"
-			<< "13 - Exit"
+			<< "12 - Edit cell\n"
+			<< "13 - Add row\n"
+			<< "14 - Settings\n"
+			<< "15 - Exit"
 			<< std::endl;
 
 		std::cout << "Option: ";
@@ -458,15 +480,30 @@ void tableManipulationMenu() {
 			(*table).printTable();
 		}
 		else if (option == 12) {
+			saveUndoSnapshot();
+			isChanged = editCell();
+			(*table).printTable();
+		}
+		else if (option == 13) {
+			saveUndoSnapshot();
+			try {
+				isChanged = (*table).addRow();
+			}
+			catch (std::exception& e) {
+				std::cout << e.what() << std::endl;
+			}
+			(*table).printTable();
+		}
+		else if (option == 14) {
 			settingsMenu();
 			(*table).printTable();
 		}
-		else if (option == 13) { 
+		else if (option == 15) { 
 			//exit
 			if (isChanged) {
 				std::cout << "\nThere are unsaved changes!\nDo you want to save them (yes/no): ";
 				char answer[5];
-				clearInputBuffer();
+				util::clearInputBuffer();
 				std::cin.getline(answer, 4);
 				if (strcmp(answer, "yes") == 0) {
 					flag = saveChanges();

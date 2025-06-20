@@ -755,3 +755,46 @@ void Table::copyRow(size_t index) {
 
 	this->rowCount++;
 }
+
+bool Table::editCell(size_t col, size_t cell, const char* newValue) {
+	if (col < 0 || cell < 0 || col >= this->colCount || cell >= this->rowCount) {
+		std::cout << "Invalid index!\n";
+		return false;
+	}
+
+	if (!newValue) {
+		this->columns[col]->changeCellValue(cell, "NULL");
+	}
+	else {
+		this->columns[col]->changeCellValue(cell, newValue);
+	}
+
+	return true;
+}
+
+bool Table::addRow() {
+	if (this->colCount == 0) {
+		std::cout << "You cannot add rows to empty table, add column first\n";
+		return false;
+	}
+
+	std::cout << "Enter data: \n";
+	util::clearInputBuffer();
+	for (size_t i = 0; i < this->colCount; i++) {
+		char input[128];
+		std::cout << this->columns[i]->getName() << ": ";
+		std::cin.getline(input, 128);
+
+		if (!input || strcmp(input, "\0") == 0) {
+			Cell temp("NULL");
+			this->columns[i]->addCell(temp);
+		}
+		else {
+			Cell temp(input);
+			this->columns[i]->addCell(temp);
+		}
+	}
+
+	this->rowCount++;
+	return true;
+}

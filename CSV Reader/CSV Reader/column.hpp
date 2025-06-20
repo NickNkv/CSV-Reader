@@ -33,6 +33,7 @@ public:
 	bool insertCellAt(size_t index, Cell& cell);
 	bool addCell(Cell& cell);
 	const Cell* getCellAt(size_t index);
+	void changeCellValue(size_t index, const char* newValue);
 	void removeCellAt(size_t index);
 	bool swapTwoCells(size_t first, size_t second); // indexes of the two cells
 

@@ -405,4 +405,11 @@ Condition util::strToCondition(const char* cond) {
 	throw std::invalid_argument("Invalid condition");
 }
 
+void util::clearInputBuffer() {
+	char ch;
+	while ((ch = std::cin.get()) != '\n' && ch != EOF) {
+		// discard leftover characters
+	}
+}
+
 
