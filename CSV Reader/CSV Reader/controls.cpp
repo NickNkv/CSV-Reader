@@ -31,14 +31,14 @@ bool openExistingFile() {
 //sorting by column
 bool sort() {
 	char colOption[MAX_FILE_NAME];
-	char orderOption[MAX_FILE_NAME];
+	char orderOption[6];
 
 	std::cout << "Sort by column. Enter column name/number: ";
 	clearInputBuffer();
 	std::cin.getline(colOption, MAX_FILE_NAME);
 
 	std::cout << "Ascending or descending (asc/desc): ";
-	std::cin.getline(orderOption, MAX_FILE_NAME);
+	std::cin.getline(orderOption, 6);
 
 	bool ascending = true;
 	if (strcmp(orderOption, "asc") == 0) {
@@ -56,7 +56,7 @@ bool sort() {
 		return (*table).sort(atoi(colOption) - 1, ascending);
 	}
 	else {
-		return (*table).sortByColName(colOption, ascending);
+		return (*table).sort((*table).findColByName(colOption), ascending);
 	}
 }
 
@@ -87,6 +87,41 @@ bool addColumn() {
 		std::cout << "Error while adding new column!\n";
 		std::cout << e.what();
 		return false;
+	}
+}
+
+bool deleteCol() {
+	size_t index = 0;
+	std::cout << "Which column do you want to delete (0 for exit): ";
+	std::cin >> index;
+
+	if (index == 0) {
+		return false;
+	}
+	else {
+		(*table).removeColumnAt(index - 1);
+		return true;
+	}
+}
+
+bool changeColName() {
+	char newName[MAX_FILE_NAME];
+	char colName[MAX_FILE_NAME];
+
+	std::cout << "Choose the column for name-change (name/number): ";
+	clearInputBuffer();
+	std::cin.getline(colName, MAX_FILE_NAME);
+
+	std::cout << "Enter new name: ";
+	std::cin.getline(newName, MAX_FILE_NAME);
+
+
+	//column can be found via name or order
+	if (util::isNum(colName)) {
+		return (*table).changeColumnName(atoi(colName) - 1, newName);
+	}
+	else {
+		return (*table).changeColumnName((*table).findColByName(colName), newName);
 	}
 }
 
@@ -164,6 +199,24 @@ void tableManipulationMenu() {
 			}
 			(*table).printTable();
 		}
+		else if (option == 5) {
+			flag = deleteCol();
+			if (flag) {
+				isChanged = true;
+			}
+
+			(*table).printTable();
+		}
+		else if (option == 6) {
+			flag = changeColName();
+			if (flag) {
+				isChanged = true;
+			}
+			else {
+				std::cout << "Unable to change name, try again!\n\n";
+			}
+			(*table).printTable();
+		}
 		else if (option == 7) {
 			flag = saveChanges();
 
@@ -177,7 +230,7 @@ void tableManipulationMenu() {
 		else if (option == 10) { 
 			//exit
 			if (isChanged) {
-				std::cout << "There are unsaved changes!\nDo you want to save them (yes/no): ";
+				std::cout << "\nThere are unsaved changes!\nDo you want to save them (yes/no): ";
 				char answer[5];
 				clearInputBuffer();
 				std::cin.getline(answer, 4);
@@ -186,10 +239,12 @@ void tableManipulationMenu() {
 
 					if (flag) {
 						isChanged = false;
-						std::cout << "Changes saved!";
+						std::cout << "Changes saved!\n\n";
 					}
-					else std::cout << "Save changes returned error, please try again!" << std::endl;
-					continue;
+					else {
+						std::cout << "Save changes returned error, please try again!" << std::endl;
+						continue;
+					}
 				}
 			}
 			std::cout << "\n";
@@ -198,7 +253,6 @@ void tableManipulationMenu() {
 		} 
 		else {
 			std::cout << "Invalid option!\n";
-			continue;
 		}
 
 	} while (true);

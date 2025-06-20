@@ -230,22 +230,23 @@ void Column::setType() {
 	}
 }
 
-void Column::setName(const char* name) {
+bool Column::setName(const char* name) {
 	if (strlen(name) == 0) {
 		std::cout << "Name can not be empty! Try again!" << std::endl;
-		return;
+		return false;
 	}
 
 	char* tempName = new (std::nothrow) char[strlen(name) + 1];
 	if (!tempName) {
 		std::cerr << "Memory allocation error while changing column " << this->name << "'s name\n";
 		std::cerr << "Try again!" << std::endl;
-		return;
+		return false;
 	}
 
 	strcpy(tempName, name);
 	this->name = tempName;
 	tempName = nullptr;
+	return true;
 }
 
 bool Column::insertCellAt(size_t index, Cell& cell) {

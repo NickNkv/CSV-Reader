@@ -29,7 +29,7 @@ public:
 
 	//mechanics
 	bool addColumn(Column& column);
-	//void removeColumn(size_t index);
+	void removeColumnAt(size_t index);
 	//void copyColumn(size_t index);
 	//void changeColumnOrder();
 	//void removeDuplicateRows();
@@ -40,12 +40,13 @@ public:
 	bool saveToFile(const char* fileName);
 	void printTable();
 	bool sort(size_t index, bool ascending = true);
-	bool sortByColName(const char* name, bool ascending = true);
+	long long findColByName(const char* name);
 	bool swapRows(size_t first, size_t second); //indexes of the two rows
 	void emptyTable();
 	bool rowsEqual(size_t first, size_t second);
 	void removeIdenticalRows();
 	void removeRow(size_t index);
+	bool changeColumnName(size_t index, const char* name);
 
 private:
 	void expandCollection();

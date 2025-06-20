@@ -24,7 +24,7 @@ public:
 	void setType();
 	 
 	const char* getName() const { return name; }
-	void setName(const char* name);
+	bool setName(const char* name);
 
 	unsigned int getWidth() const { return width; }
 	//width setter - not allowed!

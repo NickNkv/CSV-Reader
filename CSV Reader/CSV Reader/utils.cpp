@@ -164,7 +164,7 @@ ColumnType util::strToColumnType(const char* str) {
 	if (strcmp(str, "Number") == 0) return ColumnType::Number;
 	if (strcmp(str, "Currency") == 0) return ColumnType::Currency;
 	if (strcmp(str, "EGN") == 0) return ColumnType::EGN;
-	if (strcmp(str, "FacultyNumber") == 0) return ColumnType::FacultyNumber;
+	if (strcmp(str, "Faculty number") == 0) return ColumnType::FacultyNumber;
 	return ColumnType::Text;
 }
 

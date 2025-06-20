@@ -280,6 +280,23 @@ bool Table::addColumn(Column& column) {
 	return true;
 }
 
+void Table::removeColumnAt(size_t index) {
+	if (index < 0 || index >= this->colCount) {
+		std::cout << "Invalid index for column removal!\n";
+		return;
+	}
+
+	//when we delete a column, we move the rest of the columns one space backwards and nullptr the last column
+	delete this->columns[index];
+	for (size_t i = index; i < this->colCount - 1; i++) {
+		this->columns[i] = this->columns[i + 1];
+	}
+
+	this->columns[this->colCount - 1] = nullptr;
+
+	this->colCount -= 1;
+}
+
 void Table::expandCollection() {
 	Column** tempCollection = new (std::nothrow) Column * [this->colCount + 1 + BONUS_CAPACITY];
 	if (!tempCollection) {
@@ -498,15 +515,15 @@ bool Table::sort(size_t index, bool ascending) {
 	return result;
 }
 
-bool Table::sortByColName(const char* name, bool ascending) {
+long long Table::findColByName(const char* name) {
 	for (size_t i = 0; i < this->colCount; i++) {
 		if (strcmp(name, this->columns[i]->getName()) == 0) {
-			return sort(i, ascending);
+			return i;
 		}
 	}
 	
 	//name not found
-	return false;
+	return -1;
 }
 
 bool Table::swapRows(size_t first, size_t second) {
@@ -572,4 +589,12 @@ void Table::removeRow(size_t index) {
 		this->columns[i]->removeCellAt(index);
 	}
 	this->rowCount -= 1;
+}
+
+bool Table::changeColumnName(size_t index, const char* name) {
+	if (index < 0 || index >= this->colCount) {
+		return false;
+	}
+
+	return this->columns[index]->setName(name);
 }
