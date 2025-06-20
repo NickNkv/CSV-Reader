@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "utils.hpp"
+#include <iostream>
 #include <cstring>
 #include <cstdlib>
 
@@ -271,6 +272,137 @@ int util::compareCells(const Cell* a, const Cell* b, ColumnType type) {
 	default:
 		return 0;
 	}
+}
+
+bool util::filterCompare(const char* lhs, const char* rhs, Condition cond, ColumnType type) {
+	int cmp = 0;
+
+	switch (type) {
+	case ColumnType::Number: {
+		double numA = atof(lhs);
+		double numB = atof(rhs);
+
+		switch (cond) {
+		case Condition::EQUAL: return numA == numB;
+		case Condition::NOT_EQUAL: return numA != numB;
+		case Condition::LESS: return numA < numB;
+		case Condition::LESS_EQUAL: return numA <= numB;
+		case Condition::GREATER: return numA > numB;
+		case Condition::GREATER_EQUAL: return numA >= numB;
+		}
+
+		break;
+	}
+	case ColumnType::Currency: {
+		size_t lenA = strlen(lhs);
+		size_t lenB = strlen(rhs);
+		if (lenA < 4 || lenB < 4) {
+			return false;
+		}
+
+		char numStrA[64];
+		char numStrB[64];
+		strncpy(numStrA, lhs, lenA - 3);
+		numStrA[lenA - 3] = '\0';
+
+		strncpy(numStrB, rhs, lenB - 3);
+		numStrB[lenB - 3] = '\0';
+
+		double numA = atof(numStrA);
+		double numB = atof(numStrB);
+
+		switch (cond) {
+		case Condition::EQUAL: return numA == numB;
+		case Condition::NOT_EQUAL: return numA != numB;
+		case Condition::LESS: return numA < numB;
+		case Condition::LESS_EQUAL: return numA <= numB;
+		case Condition::GREATER: return numA > numB;
+		case Condition::GREATER_EQUAL: return numA >= numB;
+		}
+
+		break;
+	}
+	case ColumnType::FacultyNumber:
+	case ColumnType::Text:
+		cmp = strcmp(lhs, rhs);
+		switch (cond) {
+		case Condition::EQUAL: return cmp == 0;
+		case Condition::NOT_EQUAL: return cmp != 0;
+		case Condition::LESS: return cmp < 0;
+		case Condition::LESS_EQUAL: return cmp <= 0;
+		case Condition::GREATER: return cmp > 0;
+		case Condition::GREATER_EQUAL: return cmp >= 0;
+		}
+		break;
+	case ColumnType::EGN: {
+		int yearA = (lhs[0] - '0') * 10 + (lhs[1] - '0');
+		int monthA = (lhs[2] - '0') * 10 + (lhs[3] - '0');
+		int dayA = (lhs[4] - '0') * 10 + (lhs[5] - '0');
+
+		//date check
+		if (monthA >= 1 && monthA <= 12) {
+			yearA += 1900;
+		}
+		else if (monthA >= 21 && monthA <= 32) {
+			yearA += 1800;
+			monthA -= 20;
+		}
+		else if (monthA >= 41 && monthA <= 52) {
+			yearA += 2000;
+			monthA -= 40;
+		}
+		else {
+			return false;
+		}
+
+		int yearB = (rhs[0] - '0') * 10 + (rhs[1] - '0');
+		int monthB = (rhs[2] - '0') * 10 + (rhs[3] - '0');
+		int dayB = (rhs[4] - '0') * 10 + (rhs[5] - '0');
+
+		//date check
+		if (monthB >= 1 && monthB <= 12) {
+			yearB += 1900;
+		}
+		else if (monthB >= 21 && monthB <= 32) {
+			yearB += 1800;
+			monthB -= 20;
+		}
+		else if (monthB >= 41 && monthB <= 52) {
+			yearB += 2000;
+			monthB -= 40;
+		}
+		else {
+			return false;
+		}
+
+		unsigned daysA = yearA * 365 + monthA * 31 + dayA;
+		unsigned daysB = yearB * 365 + monthB * 31 + dayB;
+
+		switch (cond) {
+		case Condition::EQUAL: return daysA == daysB;
+		case Condition::NOT_EQUAL: return daysA != daysB;
+		case Condition::LESS: return daysA < daysB;
+		case Condition::LESS_EQUAL: return daysA <= daysB;
+		case Condition::GREATER: return daysA > daysB;
+		case Condition::GREATER_EQUAL: return daysA >= daysB;
+		}
+
+		break;
+	}
+	
+	default:
+		return false;
+	}
+}
+
+Condition util::strToCondition(const char* cond) {
+	if (strcmp(cond, "==") == 0) return Condition::EQUAL;
+	if (strcmp(cond, "!=") == 0) return Condition::NOT_EQUAL;
+	if (strcmp(cond, "<") == 0) return Condition::LESS;
+	if (strcmp(cond, "<=") == 0) return Condition::LESS_EQUAL;
+	if (strcmp(cond, ">") == 0) return Condition::GREATER;
+	if (strcmp(cond, ">=") == 0) return Condition::GREATER_EQUAL;
+	throw std::invalid_argument("Invalid condition");
 }
 
 

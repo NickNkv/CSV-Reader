@@ -60,6 +60,30 @@ bool sort() {
 	}
 }
 
+void filterTable() {
+	char colName[MAX_FILE_NAME];
+	char condition[4];
+	char value[MAX_FILE_NAME];
+
+	std::cout << "Choose column by wich to filter (name/number): ";
+	clearInputBuffer();
+	std::cin.getline(colName, MAX_FILE_NAME);
+
+	std::cout << "Enter condition (==, !=, <, <=, >, >=): ";
+	std::cin.getline(condition, 4);
+
+	std::cout << "Enter condition value: ";
+	std::cin.getline(value, MAX_FILE_NAME);
+
+	//column can be found via name or order
+	if (util::isNum(colName)) {
+		(*table).filter(atoi(colName) - 1, condition, value);
+	}
+	else {
+		(*table).filter((*table).findColByName(colName), condition, value);
+	}
+}
+
 bool addColumn() {
 	try {
 		Column col;
@@ -196,6 +220,7 @@ void tableManipulationMenu() {
 			<< "6 - Change column name\n"
 			<< "7 - Save changes\n"
 			<< "8 - Undo\n"
+			<< "9 - Add-to-end-of-table options\n"
 			<< "9 - Settings\n"
 			<< "10 - Exit"
 			<< std::endl;
@@ -213,7 +238,9 @@ void tableManipulationMenu() {
 			(*table).printTable();
 		}
 		else if (option == 2) {
-			isChanged = false;
+			filterTable();
+			(*table).printTable();
+			isChanged = true;
 		}
 		else if (option == 3) {
 			(*table).removeIdenticalRows();

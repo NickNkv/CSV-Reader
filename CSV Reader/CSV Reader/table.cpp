@@ -598,3 +598,23 @@ bool Table::changeColumnName(size_t index, const char* name) {
 
 	return this->columns[index]->setName(name);
 }
+
+void Table::filter(size_t index, const char* condStr, const char* value) {
+	if (index < 0 || index >= this->colCount) {
+		std::cout << "Invalid index for removal of a row\n";
+		return;
+	}
+
+	Condition cond = util::strToCondition(condStr);
+	ColumnType type = this->columns[index]->getType();
+
+	for (size_t i = 0; i < this->rowCount; ) {
+		const char* cellVal = this->columns[index]->getCellAt(i)->getValue();
+		if (!util::filterCompare(cellVal, value, cond, type)) {
+			removeRow(i);
+		}
+		else {
+			i++;
+		}
+	}
+}

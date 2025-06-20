@@ -47,6 +47,7 @@ public:
 	void removeIdenticalRows();
 	void removeRow(size_t index);
 	bool changeColumnName(size_t index, const char* name);
+	void filter(size_t index, const char* condStr, const char* value);
 
 private:
 	void expandCollection();
